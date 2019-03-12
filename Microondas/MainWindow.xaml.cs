@@ -23,6 +23,7 @@ namespace MicroondasProject
         private void TempoRestanteChanged(Microondas obj)
         {
             dados.Entrada = obj.Cozido;
+            dados.Tempo = obj.TempoRestante.ToString(@"mm\:ss");
         }
 
         async void Iniciar()

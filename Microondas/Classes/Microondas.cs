@@ -41,13 +41,13 @@ namespace Classes.Microondas
         public string Cozido { get; private set; }
         #endregion
 
-        public async Task Iniciar(TimeSpan tempo, int potencia, string Entrada)
+        public async Task Iniciar(TimeSpan tempo, int potencia, string entrada)
         {
             Funcao = new FuncaoMicroondas(potencia, tempo);
 
             ValidarTempo(tempo);
             tempoRestante = tempo;
-            Cozido = "Entrada";
+            Cozido = entrada;
 
             await Ligar();
         }
