@@ -15,33 +15,36 @@ namespace MicroondasProject
 
         public ICollectionView CVFuncoes { get; private set; }
 
-        private string filtroNome;
-        public string FiltroNome
+        private string filtroAlimento;
+        public string FiltroAlimento
         {
-            get { return filtroNome; }
+            get { return filtroAlimento; }
             set
             {
-                filtroNome = value;
-                OnPropertyChanged("FiltroNome");
+                filtroAlimento = value;
+                OnPropertyChanged("FiltroAlimento");
                 CVFuncoes?.Refresh();
             }
         }
 
         public ConsultaWindowDados(Microondas microondas)
         {
-            filtroNome = "";
+            filtroAlimento = "";
             CVFuncoes = CollectionViewSource.GetDefaultView(microondas.Funcoes);
             CVFuncoes.Filter = FiltrarFuncoes;
         }
 
         private bool FiltrarFuncoes(object item)
         {
-            var filtro = filtroNome.Trim().ToLower();
+            var filtro = filtroAlimento.Trim().ToLower();
             if (filtro.Length == 0)
                 return true;
 
             var funcao = item as FuncaoMicroondas;
-            var res = funcao.Nome.ToLower().Contains(filtro);
+            if (funcao.Alimento == null || funcao.Alimento == "")
+                return false;
+
+            var res = funcao.Alimento.ToLower().Contains(filtro);
             return res;
         }
     }

@@ -11,6 +11,7 @@ namespace Classes.Microondas
 
         public int Potencia { get; private set; }
         public TimeSpan Tempo { get; private set; }
+        public bool Predefinida { get; private set; }
 
         public FuncaoMicroondas()
         {
@@ -20,6 +21,7 @@ namespace Classes.Microondas
 
             Potencia = 0;
             Tempo = TimeSpan.Zero;
+            Predefinida = false;
         }
 
         public FuncaoMicroondas(int potencia, TimeSpan tempo) : this()
@@ -29,12 +31,13 @@ namespace Classes.Microondas
         }
 
         public FuncaoMicroondas(int potencia, TimeSpan tempo, string nome, string instrucao, 
-            char caractere, string alimento) : this(potencia, tempo)
+            char caractere, string alimento, bool predefinida = false) : this(potencia, tempo)
         {
             Nome = nome;
             Instrucao = instrucao;
             Caractere = caractere;
             Alimento = alimento;
+            Predefinida = predefinida;
         }
 
         public void Validar(string entrada)
@@ -46,7 +49,14 @@ namespace Classes.Microondas
 
         void ValidarEntrada(string entrada)
         {
-            if (Alimento.Contains(entrada))
+            //se não possuir alimento definido ele considera que todos são permitidos.
+            if (Alimento == null || Alimento == "")
+                return;
+
+            var lcAlimento = Alimento.ToLower().Trim();
+            var lcEntrada = entrada.ToLower().Trim();
+
+            if (lcEntrada.Contains(lcAlimento))                
                 return;
 
             throw new AlimentoIncompativel("A função não é compativel com o alimento " + entrada);

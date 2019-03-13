@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows;
+using System.Windows.Controls;
 using Classes.Microondas;
 
 namespace MicroondasProject
@@ -21,6 +22,7 @@ namespace MicroondasProject
         {
             dados.Entrada = obj.Cozido;
             dados.Tempo = obj.TempoRestante.ToString(@"mm\:ss");
+            dados.Potencia = obj.FuncaoAtual.Potencia.ToString();
         }
 
         async void Iniciar()
@@ -33,6 +35,22 @@ namespace MicroondasProject
 
                 dados.InputEnabled = false;
                 await dados.MicroondasAtual.Iniciar(tempo, potencia, entrada);
+                dados.InputEnabled = true;
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(e.Message, "Erro", MessageBoxButton.OK, MessageBoxImage.Error);
+                dados.InputEnabled = true;
+            }
+        }
+
+        async void Iniciar(FuncaoMicroondas funcaoMicroondas)
+        {
+            try
+            {
+                var entrada = dados.Entrada.Trim();
+                dados.InputEnabled = false;
+                await dados.MicroondasAtual.Iniciar(funcaoMicroondas, entrada);
                 dados.InputEnabled = true;
             }
             catch (Exception e)
@@ -66,7 +84,14 @@ namespace MicroondasProject
         private void ConsultarClick(object sender, RoutedEventArgs e)
         {
             var window = new ConsultaWindow(dados.MicroondasAtual);
+            window.Owner = this;
             window.ShowDialog();
+        }
+
+        private void FuncaoClick(object sender, RoutedEventArgs e)
+        {
+            var fm = (sender as Button).DataContext as FuncaoMicroondas;
+            Iniciar(fm);
         }
     }
 }

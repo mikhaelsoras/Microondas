@@ -56,6 +56,14 @@ namespace Classes.Microondas
         public string Cozido { get; private set; }
         #endregion
 
+        public Microondas()
+        {
+            Funcoes.Add(new FuncaoMicroondas(2, new TimeSpan(0, 1, 0), "Descongelar", "Instrução para função descongelar.", '?', null, true));
+            Funcoes.Add(new FuncaoMicroondas(6, new TimeSpan(0, 2, 0), "Lasanha", "Instrução para função lasanha.", 'D', "Lasanha", true));
+            Funcoes.Add(new FuncaoMicroondas(7, new TimeSpan(0, 0, 50), "Pipoca", "Instrução para função pipoca.", '@', "Pipoca", true));
+            Funcoes.Add(new FuncaoMicroondas(3, new TimeSpan(0, 2, 0), "Arroz", "Instrução para função arroz.", '-', "Arroz", true));
+            Funcoes.Add(new FuncaoMicroondas(3, new TimeSpan(0, 2, 0), "Sopa", "Instrução para função sopa.", '+', "Sopa", true));
+        }
 
         public async Task Iniciar(TimeSpan tempo, int potencia, string entrada)
         {

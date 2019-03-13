@@ -4,36 +4,38 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
-        Title="ConsultaWindow" Height="450" Width="800">
+        Title="ConsultaWindow" Height="450" Width="800" WindowStartupLocation="CenterOwner">
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="30"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
+        <Grid Margin="5">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock Text="Pesquisar Alimento" Margin="0,0,5,0"/>
+            <TextBox Text="{Binding FiltroAlimento, UpdateSourceTrigger=PropertyChanged}" Height="20" Grid.Column="1" />
+        </Grid>
+
         <ListView Grid.Row="1" ItemsSource="{Binding CVFuncoes}" IsSynchronizedWithCurrentItem="True">
+            <ListView.View>
+                <GridView AllowsColumnReorder="true" ColumnHeaderToolTip="Employee Information">
+                    <GridViewColumn DisplayMemberBinding='{Binding Path=Nome}' Header="Nome" Width="140"/>
+                    <GridViewColumn DisplayMemberBinding="{Binding Path=Instrucao}" Header="Instrucao" Width="350"/>
+                    <GridViewColumn DisplayMemberBinding="{Binding Path=Alimento}" Header="Alimento" Width="140"/>
+                    <GridViewColumn DisplayMemberBinding="{Binding Path=Tempo}" Header="Tempo" Width="70"/>
+                    <GridViewColumn DisplayMemberBinding="{Binding Path=Caractere}" Header="Caractere" Width="70"/>
+                </GridView>
+            </ListView.View>
             <ListView.ItemContainerStyle>
                 <Style TargetType="ListViewItem">
                     <Setter Property="HorizontalAlignment" Value="Stretch" />
                     <Setter Property="HorizontalContentAlignment" Value="Stretch" />
                 </Style>
             </ListView.ItemContainerStyle>
-            <ListView.ItemTemplate>
-                <DataTemplate>
-                    <Grid Margin="0,0,0,1">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="0.2*"/>
-                        </Grid.ColumnDefinitions>
-                        <TextBlock Text="{Binding Nome}"/>
-                        <TextBlock Grid.Column="1" Text="{Binding Instrucao}"/>
-                        <TextBlock Grid.Column="2" Text="{Binding Tempo, StringFormat=m\\:ss}" />
-                        <TextBlock Grid.Column="3" Text="{Binding Potencia}"/>
-                    </Grid>
-                </DataTemplate>
-            </ListView.ItemTemplate>
         </ListView>
     </Grid>
 </Window>
