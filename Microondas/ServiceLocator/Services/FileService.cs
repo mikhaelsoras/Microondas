@@ -33,5 +33,17 @@ namespace ServicesLocator.Services
                 arquivo.Write(conteudo);
             }
         }
+
+        public StreamWriter GetStreamWriter(string caminho, bool append = false)
+        {
+            if (FileExists(caminho))
+                return new StreamWriter(caminho, append);
+            return null;
+        }
+
+        public bool FileExists(string caminho)
+        {
+            return File.Exists(caminho);
+        }
     }
 }

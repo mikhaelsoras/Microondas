@@ -15,18 +15,34 @@ namespace Classes.Microondas
         #region Eventos
         public Action<Microondas> TempoRestanteChanged;
         public Action<string> Concluido;
+        public Action Cancelado;
         public Action<string> Erro;
+        public Action<bool> PausarChanged;
 
         void OnTempoRestanteChanged()
         {
             TempoRestanteChanged?.Invoke(this);
         }
 
-        void OnConcluido()
+        void OnConcluido(string txt)
         {
-            Concluido?.Invoke(Cozido);
+            Concluido?.Invoke(txt);
         }
+        void OnPauseChanged(bool isPaused)
+        {
+            IsPausado = isPaused;
+            pedidoPausa = false;
+            PausarChanged?.Invoke(IsPausado);
+        }
+        void OnCancelado()
+        {
+            pedidoPausa = false;
+            pedidoCancelar = false;
+            TempoRestante = TimeSpan.Zero;
+            FuncaoAtual = null;
 
+            Cancelado?.Invoke();
+        }
         //Retorna true caso o evento exista
         bool OnErro(string msg)
         {  
@@ -35,7 +51,14 @@ namespace Classes.Microondas
         }
         #endregion
 
+        private bool pedidoPausa, pedidoCancelar;
+
         #region Props
+
+        //verifica se deve pausar após cada segundo
+
+        public bool IsPausado { get; private set; }
+
         private ObservableCollection<FuncaoMicroondas> funcoes;
 
         public ObservableCollection<FuncaoMicroondas> Funcoes
@@ -52,7 +75,7 @@ namespace Classes.Microondas
             }
         }
 
-        public FuncaoMicroondas FuncaoAtual = new FuncaoMicroondas();
+        public FuncaoMicroondas FuncaoAtual;
 
         private TimeSpan tempoRestante;
         public TimeSpan TempoRestante
@@ -68,7 +91,7 @@ namespace Classes.Microondas
             }
         }
 
-        public string Cozido { get; private set; }
+        public string Entrada { get; private set; }
         #endregion
 
         public Microondas()
@@ -158,10 +181,11 @@ namespace Classes.Microondas
                 funcao.Validar(entrada.Trim());
 
                 FuncaoAtual = funcao;
-                Cozido = entrada;
-                TempoRestante = funcao.Tempo;
 
-                Ligar();
+                Entrada = entrada;
+                TempoRestante = FuncaoAtual.Tempo;
+
+                Ligar(entrada);
             }
             catch (Exception e)
             {
@@ -184,30 +208,95 @@ namespace Classes.Microondas
             }
         }
 
-        async void Ligar()
+        async void Ligar(string entrada)
         {
             try
             {
+                var FS = ServiceLocator.Get<IFileService>();
                 var tick = new TimeSpan(0, 0, 1);
-                while (TempoRestante.TotalSeconds > 0)
+
+                OnPauseChanged(false);
+
+                if (FS.FileExists(entrada))
                 {
-                    await Aquecer(tick);
-                    TempoRestante = TempoRestante.Subtract(tick);
+                    using (StreamWriter sw = FS.GetStreamWriter(entrada, true))
+                    {
+                        while (TempoRestante.TotalSeconds > 0 && !pedidoPausa && !pedidoCancelar)
+                        {
+                            await Aquecer(tick, sw);
+                            TempoRestante = TempoRestante.Subtract(tick);
+                        }
+                    }
+
+                    if (!pedidoPausa && !pedidoCancelar)
+                        OnConcluido(FS.Carregar(entrada));
+                    else
+                    {
+                        if (pedidoCancelar)
+                            OnCancelado();
+                        else if (pedidoPausa)
+                            OnPauseChanged(true);
+                    }
                 }
-                OnConcluido();
+                else
+                {
+                    while (TempoRestante.TotalSeconds > 0 && !pedidoPausa && !pedidoCancelar)
+                    {
+                        await Aquecer(tick);
+                        TempoRestante = TempoRestante.Subtract(tick);
+                    }
+
+                    if (!pedidoPausa && !pedidoCancelar)
+                        OnConcluido(Entrada);
+                    else
+                    {
+                        if (pedidoCancelar)
+                            OnCancelado();
+                        else if (pedidoPausa)
+                            OnPauseChanged(true);
+                    }
+                }                
             }
             catch (Exception e)
             {
+                OnPauseChanged(false);
                 if (!OnErro(e.Message))
                     throw;
             }
         }
 
-        async Task Aquecer(TimeSpan tempo)
+        public void Continuar()
         {
-            await Task.Delay(tempo);            
+            if (IsPausado && tempoRestante.TotalSeconds > 0)
+                Ligar(Entrada);
+        }
+
+        public void Pausar()
+        {
+            if (!IsPausado && tempoRestante.TotalSeconds > 0)
+                pedidoPausa = true;
+        }
+
+        public void Cancelar()
+        {
+            if (tempoRestante.TotalSeconds > 0)
+            {
+                pedidoCancelar = true;
+            }
+        }
+
+        async Task Aquecer(TimeSpan tempo, StreamWriter sw = null)
+        {
+            await Task.Delay(tempo);
+
+            var caracteres = "";
             for (int i = 0; i < FuncaoAtual.Potencia; i++)
-                Cozido += FuncaoAtual.Caractere;
+                caracteres += FuncaoAtual.Caractere;
+
+            if (sw == null)
+                Entrada += caracteres;
+            else
+                sw.Write(caracteres);
         }
     }
 }

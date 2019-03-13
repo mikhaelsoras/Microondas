@@ -16,26 +16,33 @@ namespace MicroondasProject
             dados = new MainWindowDados();
             dados.MicroondasAtual.TempoRestanteChanged += TempoRestanteChanged;
             dados.MicroondasAtual.Concluido += ConcluidoAquecimento;
+            dados.MicroondasAtual.Cancelado += CanceladoAquecimento;
             dados.MicroondasAtual.Erro += ExibirErro;
             DataContext = dados;
         }
 
+        private void CanceladoAquecimento()
+        {
+            MessageBox.Show("Cancelado");
+            dados.IsLigado = false;
+        }
+
         private void ExibirErro(string obj)
         {
+            if (dados.IsLigado)
+                dados.IsLigado = false;
             MessageBox.Show(obj, "Erro", MessageBoxButton.OK, MessageBoxImage.Error);
-            if (!dados.InputEnabled)
-                dados.InputEnabled = true;
         }
 
         private void ConcluidoAquecimento(string obj)
         {
             MessageBox.Show("Concluido: " + obj);
-            dados.InputEnabled = true;
+            dados.IsLigado = false;
         }
 
         private void TempoRestanteChanged(Microondas obj)
         {
-            dados.Entrada = obj.Cozido;
+            dados.Entrada = obj.Entrada;
             dados.Tempo = obj.TempoRestante.ToString(@"mm\:ss");
             dados.Potencia = obj.FuncaoAtual.Potencia.ToString();
         }
@@ -48,13 +55,12 @@ namespace MicroondasProject
                 var potencia = dados.GetPotencia();
                 var entrada = dados.Entrada.Trim();
 
-                dados.InputEnabled = false;
+                dados.IsLigado = true;
                 dados.MicroondasAtual.Iniciar(tempo, potencia, entrada);
             }
             catch (Exception e)
             {
-                MessageBox.Show(e.Message, "Erro", MessageBoxButton.OK, MessageBoxImage.Error);
-                dados.InputEnabled = true;
+                ExibirErro(e.Message);
             }
         }
 
@@ -63,7 +69,7 @@ namespace MicroondasProject
             try
             {
                 var entrada = dados.Entrada.Trim();
-                dados.InputEnabled = false;
+                dados.IsLigado = true;
                 dados.MicroondasAtual.Iniciar(funcaoMicroondas, entrada);
             }
             catch (Exception e)
@@ -104,6 +110,19 @@ namespace MicroondasProject
         {
             var fm = (sender as Button).DataContext as FuncaoMicroondas;
             Iniciar(fm);
+        }
+
+        private void PausarClick(object sender, RoutedEventArgs e)
+        {
+            if (!dados.IsPausado)
+                dados.MicroondasAtual.Pausar();
+            else
+                dados.MicroondasAtual.Continuar();
+        }
+
+        private void CancelarClick(object sender, RoutedEventArgs e)
+        {
+            dados.MicroondasAtual.Cancelar();
         }
     }
 }

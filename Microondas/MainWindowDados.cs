@@ -65,14 +65,36 @@ namespace MicroondasProject
             }
         }
 
-        private bool inputEnabled;
-        public bool InputEnabled
+        private bool isLigado;
+        public bool IsLigado
         {
-            get { return inputEnabled; }
+            get { return isLigado; }
             set
             {
-                inputEnabled = value;
-                OnPropertyChanged("InputEnabled");
+                isLigado = value;
+                OnPropertyChanged("IsLigado");
+                OnPropertyChanged("IsDesligado");
+            }
+        }
+
+        public bool IsDesligado
+        {
+            get { return !isLigado; }
+        }
+        
+        public bool IsPausado
+        {
+            get { return MicroondasAtual.IsPausado; }
+        }
+
+        public string PausarText
+        {
+            get
+            {
+                if (IsPausado)
+                    return "Continuar";
+                else
+                    return "Pausar";
             }
         }
         #endregion
@@ -93,13 +115,20 @@ namespace MicroondasProject
             Entrada = "";
             Tempo = "0:00";
             Potencia = "10";
-            inputEnabled = true;
+            isLigado = false;
             filtroFuncoes = "";
 
             MicroondasAtual = new Microondas();
+            MicroondasAtual.PausarChanged += PausarChanged;
 
             CVFuncoes = CollectionViewSource.GetDefaultView(MicroondasAtual.Funcoes);
             CVFuncoes.Filter = FiltrarFuncoes;
+        }
+
+        private void PausarChanged(bool obj)
+        {
+            OnPropertyChanged("IsPausado");
+            OnPropertyChanged("PausarText");
         }
 
         public TimeSpan GetTempo()

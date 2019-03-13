@@ -1,4 +1,6 @@
 ﻿using Newtonsoft.Json;
+using ServicesLocator.Interfaces;
+using ServicesLocator.Locator;
 using System;
 
 namespace Classes.Microondas
@@ -56,13 +58,21 @@ namespace Classes.Microondas
             if (Alimento == null || Alimento == "")
                 return;
 
+            var FS = ServiceLocator.Get<IFileService>();
+
+            string lcEntrada;
+
+            if (FS.FileExists(entrada))
+                lcEntrada = FS.Carregar(entrada).ToLower().Trim();
+            else
+                lcEntrada = entrada.ToLower().Trim();
+
             var lcAlimento = Alimento.ToLower().Trim();
-            var lcEntrada = entrada.ToLower().Trim();
 
             if (lcEntrada.Contains(lcAlimento))                
                 return;
 
-            throw new AlimentoIncompativelException("A função não é compativel com o alimento " + entrada);
+            throw new AlimentoIncompativelException("A função não é compativel com o alimento " + lcEntrada);
         }
 
         void ValidarPotencia(int value)
