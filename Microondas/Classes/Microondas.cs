@@ -19,32 +19,33 @@ namespace Classes.Microondas
         public Action<string> Erro;
         public Action<bool> PausarChanged;
 
-        void OnTempoRestanteChanged()
+        private void OnTempoRestanteChanged()
         {
             TempoRestanteChanged?.Invoke(this);
         }
 
-        void OnConcluido(string txt)
+        private void OnConcluido(string txt)
         {
             Concluido?.Invoke(txt);
         }
-        void OnPauseChanged(bool isPaused)
+        private void OnPauseChanged(bool isPaused)
         {
             IsPausado = isPaused;
             pedidoPausa = false;
             PausarChanged?.Invoke(IsPausado);
         }
-        void OnCancelado()
+        private void OnCancelado()
         {
             pedidoPausa = false;
             pedidoCancelar = false;
             TempoRestante = TimeSpan.Zero;
             FuncaoAtual = null;
+            contadorSegundos = TimeSpan.Zero;
 
             Cancelado?.Invoke();
         }
         //Retorna true caso o evento exista
-        bool OnErro(string msg)
+        private bool OnErro(string msg)
         {  
             Erro?.Invoke(msg);
             return Erro != null;
@@ -52,6 +53,8 @@ namespace Classes.Microondas
         #endregion
 
         private bool pedidoPausa, pedidoCancelar;
+        // vai receber quanto tempo foi acumulado antes de aquecer a entrada
+        private TimeSpan contadorSegundos;
 
         #region Props
 
@@ -91,7 +94,7 @@ namespace Classes.Microondas
             }
         }
 
-        public string Entrada { get; private set; }
+        public string EntradaAquecida { get; private set; }
         #endregion
 
         public Microondas()
@@ -182,8 +185,9 @@ namespace Classes.Microondas
 
                 FuncaoAtual = funcao;
 
-                Entrada = entrada;
+                EntradaAquecida = entrada;
                 TempoRestante = FuncaoAtual.Tempo;
+                contadorSegundos = TimeSpan.Zero;
 
                 Ligar(entrada);
             }
@@ -213,49 +217,25 @@ namespace Classes.Microondas
             try
             {
                 var FS = ServiceLocator.Get<IFileService>();
-                var tick = new TimeSpan(0, 0, 1);
+                var sec = new TimeSpan(0, 0, 1);
+                var tick = new TimeSpan(sec.Ticks / 10); //tempo de espera entre cada atualização
 
                 OnPauseChanged(false);
 
                 if (FS.FileExists(entrada))
-                {
-                    using (StreamWriter sw = FS.GetStreamWriter(entrada, true))
-                    {
-                        while (TempoRestante.TotalSeconds > 0 && !pedidoPausa && !pedidoCancelar)
-                        {
-                            await Aquecer(tick, sw);
-                            TempoRestante = TempoRestante.Subtract(tick);
-                        }
-                    }
+                    await Aquecer(entrada, FS, sec, tick);
+                else
+                    await Aquecer(sec, tick);
 
-                    if (!pedidoPausa && !pedidoCancelar)
-                        OnConcluido(FS.Carregar(entrada));
-                    else
-                    {
-                        if (pedidoCancelar)
-                            OnCancelado();
-                        else if (pedidoPausa)
-                            OnPauseChanged(true);
-                    }
-                }
+                if (!pedidoPausa && !pedidoCancelar)
+                    OnConcluido(EntradaAquecida);
                 else
                 {
-                    while (TempoRestante.TotalSeconds > 0 && !pedidoPausa && !pedidoCancelar)
-                    {
-                        await Aquecer(tick);
-                        TempoRestante = TempoRestante.Subtract(tick);
-                    }
-
-                    if (!pedidoPausa && !pedidoCancelar)
-                        OnConcluido(Entrada);
-                    else
-                    {
-                        if (pedidoCancelar)
-                            OnCancelado();
-                        else if (pedidoPausa)
-                            OnPauseChanged(true);
-                    }
-                }                
+                    if (pedidoCancelar)
+                        OnCancelado();
+                    else if (pedidoPausa)
+                        OnPauseChanged(true);
+                }
             }
             catch (Exception e)
             {
@@ -265,10 +245,48 @@ namespace Classes.Microondas
             }
         }
 
+        private async Task Aquecer(TimeSpan sec, TimeSpan tick)
+        {
+            while (TempoRestante.TotalSeconds > 0 && !pedidoPausa && !pedidoCancelar)
+            {
+                await Task.Delay(tick);
+                contadorSegundos = contadorSegundos.Add(tick);
+
+                if (contadorSegundos.TotalMilliseconds >= sec.TotalMilliseconds)
+                {
+                    Aquecer();
+                    contadorSegundos = contadorSegundos.Subtract(sec);
+                }
+
+                TempoRestante = TempoRestante.Subtract(tick);
+            }
+        }
+
+        private async Task Aquecer(string caminho, IFileService FS, TimeSpan sec, TimeSpan tick)
+        {
+            using (StreamWriter sw = FS.GetStreamWriter(caminho, true))
+            {
+                while (TempoRestante.TotalSeconds > 0 && !pedidoPausa && !pedidoCancelar)
+                {
+                    await Task.Delay(tick);
+                    contadorSegundos = contadorSegundos.Add(tick);
+
+                    if (contadorSegundos.TotalMilliseconds >= sec.TotalMilliseconds)
+                    {
+                        Aquecer(sw);
+                        contadorSegundos = contadorSegundos.Subtract(sec);
+                    }
+
+                    TempoRestante = TempoRestante.Subtract(tick);
+                }
+            }
+            EntradaAquecida = FS.Carregar(caminho);
+        }
+
         public void Continuar()
         {
             if (IsPausado && tempoRestante.TotalSeconds > 0)
-                Ligar(Entrada);
+                Ligar(EntradaAquecida);
         }
 
         public void Pausar()
@@ -285,16 +303,14 @@ namespace Classes.Microondas
             }
         }
 
-        async Task Aquecer(TimeSpan tempo, StreamWriter sw = null)
+        private void Aquecer(StreamWriter sw = null)
         {
-            await Task.Delay(tempo);
-
             var caracteres = "";
             for (int i = 0; i < FuncaoAtual.Potencia; i++)
                 caracteres += FuncaoAtual.Caractere;
 
             if (sw == null)
-                Entrada += caracteres;
+                EntradaAquecida += caracteres;
             else
                 sw.Write(caracteres);
         }

@@ -42,7 +42,7 @@ namespace MicroondasProject
 
         private void TempoRestanteChanged(Microondas obj)
         {
-            dados.Entrada = obj.Entrada;
+            dados.Entrada = obj.EntradaAquecida;
             dados.Tempo = obj.TempoRestante.ToString(@"mm\:ss");
             dados.Potencia = obj.FuncaoAtual.Potencia.ToString();
         }
@@ -89,14 +89,6 @@ namespace MicroondasProject
             dados.Tempo = "0:20";
 
             Iniciar();
-        }
-
-        private void TesteClick(object sender, RoutedEventArgs e)
-        {
-            //ServiceLocator.Get<ILocalDataService>().Salvar();
-            //var txt = ServiceLocator.Get<ILocalDataService>().Carregar();
-
-            dados.MicroondasAtual.Funcoes.Add(new FuncaoMicroondas(5, new TimeSpan(0, 0, 25), "Teste", "instrucao teste", '@', "frango"));
         }
 
         private void ConsultarClick(object sender, RoutedEventArgs e)
