@@ -61,9 +61,10 @@
     <Compile Include="ConsultaWindow.xaml.cs">
       <DependentUpon>ConsultaWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ConsultaWindowDados.cs" />
     <Compile Include="ServiceLocator\Interfaces\IFileService.cs" />
     <Compile Include="ServiceLocator\Interfaces\IServiceLocatorService.cs" />
-    <Compile Include="ServiceLocator\ServiceLocator.cs" />
+    <Compile Include="ServiceLocator\ServicesLocator.cs" />
     <Compile Include="ServiceLocator\Services\FileService.cs" />
     <Page Include="ConsultaWindow.xaml">
       <SubType>Designer</SubType>

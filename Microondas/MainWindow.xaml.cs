@@ -15,7 +15,22 @@ namespace MicroondasProject
 
             dados = new MainWindowDados();
             dados.MicroondasAtual.TempoRestanteChanged += TempoRestanteChanged;
+            dados.MicroondasAtual.Concluido += ConcluidoAquecimento;
+            dados.MicroondasAtual.Erro += ExibirErro;
             DataContext = dados;
+        }
+
+        private void ExibirErro(string obj)
+        {
+            MessageBox.Show(obj, "Erro", MessageBoxButton.OK, MessageBoxImage.Error);
+            if (!dados.InputEnabled)
+                dados.InputEnabled = true;
+        }
+
+        private void ConcluidoAquecimento(string obj)
+        {
+            MessageBox.Show("Concluido: " + obj);
+            dados.InputEnabled = true;
         }
 
         private void TempoRestanteChanged(Microondas obj)
@@ -25,7 +40,7 @@ namespace MicroondasProject
             dados.Potencia = obj.FuncaoAtual.Potencia.ToString();
         }
 
-        async void Iniciar()
+        private void Iniciar()
         {
             try
             {
@@ -34,8 +49,7 @@ namespace MicroondasProject
                 var entrada = dados.Entrada.Trim();
 
                 dados.InputEnabled = false;
-                await dados.MicroondasAtual.Iniciar(tempo, potencia, entrada);
-                dados.InputEnabled = true;
+                dados.MicroondasAtual.Iniciar(tempo, potencia, entrada);
             }
             catch (Exception e)
             {
@@ -44,19 +58,17 @@ namespace MicroondasProject
             }
         }
 
-        async void Iniciar(FuncaoMicroondas funcaoMicroondas)
+        private void Iniciar(FuncaoMicroondas funcaoMicroondas)
         {
             try
             {
                 var entrada = dados.Entrada.Trim();
                 dados.InputEnabled = false;
-                await dados.MicroondasAtual.Iniciar(funcaoMicroondas, entrada);
-                dados.InputEnabled = true;
+                dados.MicroondasAtual.Iniciar(funcaoMicroondas, entrada);
             }
             catch (Exception e)
             {
-                MessageBox.Show(e.Message, "Erro", MessageBoxButton.OK, MessageBoxImage.Error);
-                dados.InputEnabled = true;
+                ExibirErro(e.Message);
             }
         }
 

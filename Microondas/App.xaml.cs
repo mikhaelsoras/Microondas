@@ -1,4 +1,4 @@
-﻿using ServiceLocator.Services;
+﻿using ServicesLocator.Services;
 using System;
 using System.Collections.Generic;
 using System.Configuration;

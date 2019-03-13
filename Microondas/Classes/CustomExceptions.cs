@@ -2,35 +2,33 @@
 
 namespace Classes.Microondas
 {
-    public class TempoForaDoLimite : Exception
+    public class TempoForaDoLimiteException : Exception
     {
-        public TempoForaDoLimite() { }
-
-        public TempoForaDoLimite(string message)
+        public TempoForaDoLimiteException(string message)
             : base(message) { }
     }
 
-    public class AlimentoIncompativel : Exception
+    public class NomeFuncaoNaoInformadaException : Exception
     {
-        public AlimentoIncompativel() { }
-
-        public AlimentoIncompativel(string message)
+        public NomeFuncaoNaoInformadaException(string message)
             : base(message) { }
     }
 
-    public class PotenciaForaDoLimite : Exception
+    public class AlimentoIncompativelException : Exception
     {
-        public PotenciaForaDoLimite() { }
-
-        public PotenciaForaDoLimite(string message)
+        public AlimentoIncompativelException(string message)
             : base(message) { }
     }
 
-    public class TempoNaoInformado : Exception
+    public class PotenciaForaDoLimiteException : Exception
     {
-        public TempoNaoInformado() { }
+        public PotenciaForaDoLimiteException(string message)
+            : base(message) { }
+    }
 
-        public TempoNaoInformado(string message)
+    public class TempoNaoInformadoException : Exception
+    {
+        public TempoNaoInformadoException(string message)
             : base(message) { }
     }
 }

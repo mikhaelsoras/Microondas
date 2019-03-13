@@ -1,8 +1,9 @@
-﻿using ServiceLocator.Interfaces;
+﻿using ServicesLocator.Interfaces;
 using System;
 using System.IO;
+using ServicesLocator.Locator;
 
-namespace ServiceLocator.Services
+namespace ServicesLocator.Services
 {
     public class FileService : IFileService
     {
@@ -22,7 +23,7 @@ namespace ServiceLocator.Services
 
         public void RegisterService()
         {
-            MicroondasProject.ServiceLocator.Set<IFileService>(this);
+            ServiceLocator.Set<IFileService>(this);
         }
 
         public void Salvar(string caminho, string conteudo)

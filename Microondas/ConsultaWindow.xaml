@@ -9,6 +9,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
         <Grid Margin="5">
@@ -24,10 +25,10 @@
             <ListView.View>
                 <GridView AllowsColumnReorder="true" ColumnHeaderToolTip="Employee Information">
                     <GridViewColumn DisplayMemberBinding='{Binding Path=Nome}' Header="Nome" Width="140"/>
-                    <GridViewColumn DisplayMemberBinding="{Binding Path=Instrucao}" Header="Instrucao" Width="350"/>
-                    <GridViewColumn DisplayMemberBinding="{Binding Path=Alimento}" Header="Alimento" Width="140"/>
+                    <GridViewColumn DisplayMemberBinding="{Binding Path=Instrucao}" Header="Instrução" Width="350"/>
+                    <GridViewColumn DisplayMemberBinding="{Binding Path=Alimento}" Header="Alimento" Width="140"/> 
                     <GridViewColumn DisplayMemberBinding="{Binding Path=Tempo}" Header="Tempo" Width="70"/>
-                    <GridViewColumn DisplayMemberBinding="{Binding Path=Caractere}" Header="Caractere" Width="70"/>
+                    <GridViewColumn DisplayMemberBinding="{Binding Path=Potencia}" Header="Potência" Width="70"/>
                 </GridView>
             </ListView.View>
             <ListView.ItemContainerStyle>
@@ -37,5 +38,61 @@
                 </Style>
             </ListView.ItemContainerStyle>
         </ListView>
+
+        <GroupBox Grid.Row="2" Header="Cadastro de Função" Margin="5">
+            <Grid Margin="3">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+            
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <Grid Margin="0,0,0,5">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="53"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="Nome" Margin="0,0,5,0"/>
+                        <TextBox Text="{Binding Nome, Mode=TwoWay}" Grid.Column="1"/>
+
+                        <TextBlock Text="Instrução" Grid.Column="2" Margin="5,0"/>
+                        <TextBox Text="{Binding Instrucao, Mode=TwoWay}" Grid.Column="3"/>
+                    </Grid>
+
+                    <Grid Grid.Row="1">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="53"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="35"/>
+                        </Grid.ColumnDefinitions>
+                    
+                        <TextBlock Text="Alimento" Margin="0,0,5,0"/>
+                        <TextBox Text="{Binding Alimento, Mode=TwoWay}" Grid.Column="1"/>
+
+                        <TextBlock Text="Potência" Margin="5,0" Grid.Column="2"/>
+                        <TextBox Text="{Binding Potencia, Mode=TwoWay}" Grid.Column="3"/>
+
+                        <TextBlock Text="Tempo" Margin="5,0" Grid.Column="4"/>
+                        <TextBox Text="{Binding Tempo, Mode=TwoWay}" Grid.Column="5"/>
+                    
+                        <TextBlock Text="Caractere" Margin="5,0" Grid.Column="6"/>
+                        <TextBox Text="{Binding Caractere, Mode=TwoWay}" Grid.Column="7"/>
+                    </Grid>
+                </Grid>
+                <Button Grid.Column="1" Content="Adicionar" Width="80" Margin="5,0,0,0" Click="AdicionarClick"/>
+            </Grid>
+        </GroupBox>
     </Grid>
 </Window>

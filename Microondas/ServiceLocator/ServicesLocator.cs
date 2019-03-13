@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using ServiceLocator.Interfaces;
+using ServicesLocator.Interfaces;
 
-namespace MicroondasProject
+namespace ServicesLocator.Locator
 {
     public static class ServiceLocator
     {

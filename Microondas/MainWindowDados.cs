@@ -105,7 +105,7 @@ namespace MicroondasProject
         public TimeSpan GetTempo()
         {
             if (Tempo.Trim() == "")
-                throw new TempoNaoInformado("O tempo não foi informado.");
+                throw new TempoNaoInformadoException("O tempo não foi informado.");
 
             TimeSpan valor;
             if (TimeSpan.TryParse("0:" + Tempo.Trim(), out valor))
@@ -116,6 +116,8 @@ namespace MicroondasProject
 
         public int GetPotencia()
         {
+            if (Potencia.Trim().Length == 0)
+                throw new Exception("Potência não informada.");
             int valor;
             if (int.TryParse(Potencia, out valor))
                 return valor;
