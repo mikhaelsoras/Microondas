@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 
 namespace Classes.Microondas
@@ -20,9 +21,23 @@ namespace Classes.Microondas
         }
         #endregion
 
-        #region Properties
+        #region Props
+        private ObservableCollection<FuncaoMicroondas> funcoes;
+        public ObservableCollection<FuncaoMicroondas> Funcoes
+        {
+            get
+            {
+                if (funcoes == null)
+                    funcoes = new ObservableCollection<FuncaoMicroondas>();
+                return funcoes;
+            }
+            set
+            {
+                funcoes = value;
+            }
+        }
 
-        public FuncaoMicroondas Funcao = new FuncaoMicroondas();
+        public FuncaoMicroondas FuncaoAtual = new FuncaoMicroondas();
 
         private TimeSpan tempoRestante;
         public TimeSpan TempoRestante
@@ -41,20 +56,27 @@ namespace Classes.Microondas
         public string Cozido { get; private set; }
         #endregion
 
+
         public async Task Iniciar(TimeSpan tempo, int potencia, string entrada)
         {
-            Funcao = new FuncaoMicroondas(potencia, tempo);
+            var funcao = new FuncaoMicroondas(potencia, tempo);
+            await Iniciar(funcao, entrada);
+        }
 
-            ValidarTempo(tempo);
-            tempoRestante = tempo;
+        public async Task Iniciar(FuncaoMicroondas funcao, string entrada)
+        {
+            funcao.Validar(entrada.Trim());
+
+            FuncaoAtual = funcao;
             Cozido = entrada;
+            TempoRestante = funcao.Tempo;
 
             await Ligar();
         }
 
         public async Task InicioRapido(string entrada)
         {
-            var tempo = new TimeSpan(0,0,30);
+            var tempo = new TimeSpan(0, 0, 30);
             await Iniciar(tempo, 8, entrada);
         }
 
@@ -74,24 +96,8 @@ namespace Classes.Microondas
         async Task Aquecer(TimeSpan tempo)
         {
             await Task.Delay(tempo);            
-            for (int i = 0; i < Funcao.Potencia; i++)
-                Cozido += '.';
-        }
-
-        private static void ValidarPotencia(int value)
-        {
-            if (value > 10)
-                throw new PotenciaForaDoLimite("Potência com valor maior que o máximo permitido.");
-            else if (value < 1)
-                throw new PotenciaForaDoLimite("Potência com valor menor que o minimo permitido.");
-        }
-
-        private static void ValidarTempo(TimeSpan value)
-        {
-            if (value.TotalSeconds > 120)
-                throw new TempoForaDoLimite("Tempo com valor maior que o máximo permitido.");
-            else if (value.TotalSeconds < 1)
-                throw new TempoForaDoLimite("Tempo com valor menor que o minimo permitido.");
+            for (int i = 0; i < FuncaoAtual.Potencia; i++)
+                Cozido += FuncaoAtual.Caractere;
         }
     }
 }

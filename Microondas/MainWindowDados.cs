@@ -1,12 +1,37 @@
 ﻿using System;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Windows.Data;
 using Classes.Microondas;
 
 namespace MicroondasProject
 {
-    public class DadosFormPrincipal : INotifyPropertyChanged
+    public class MainWindowDados : INotifyPropertyChanged
     {
+        public event PropertyChangedEventHandler PropertyChanged;
+        protected void OnPropertyChanged(string name)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+        }
+
         #region Props
+
+        public Microondas MicroondasAtual { get; private set; }
+
+        private string filtroFuncoes;
+        public string FiltroFuncoes
+        {
+            get { return filtroFuncoes; }
+            set
+            {
+                filtroFuncoes = value;
+                OnPropertyChanged("FiltroFuncoes");
+                CVFuncoes?.Refresh();
+            }
+        }
+
+        public ICollectionView CVFuncoes { get; private set; }
+
         private string tempo;
         public string Tempo
         {
@@ -51,19 +76,30 @@ namespace MicroondasProject
             }
         }
         #endregion
-
-        public event PropertyChangedEventHandler PropertyChanged;
-        protected void OnPropertyChanged(string name)
+        
+        private bool FiltrarFuncoes(object item)
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+            var filtro = filtroFuncoes.Trim().ToLower();
+            if (filtro.Length == 0)
+                return true;
+
+            var funcao = item as FuncaoMicroondas;
+            var res = funcao.Nome.ToLower().Contains(filtro);
+            return res;
         }
 
-        public DadosFormPrincipal()
+        public MainWindowDados()
         {
             Entrada = "";
             Tempo = "0:00";
             Potencia = "10";
             inputEnabled = true;
+            filtroFuncoes = "";
+
+            MicroondasAtual = new Microondas();
+
+            CVFuncoes = CollectionViewSource.GetDefaultView(MicroondasAtual.Funcoes);
+            CVFuncoes.Filter = FiltrarFuncoes;
         }
 
         public TimeSpan GetTempo()

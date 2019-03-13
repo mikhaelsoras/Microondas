@@ -5,40 +5,85 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
-    <Grid Margin="15" IsEnabled="{Binding InputEnabled}">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="35"/>
-        </Grid.RowDefinitions>
+    <Grid Margin="15,10,15,15" IsEnabled="{Binding InputEnabled}">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="200"/>
+        </Grid.ColumnDefinitions>
 
         <Grid>
             <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="30"/>
+            </Grid.RowDefinitions>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <TextBlock Text="Entrada"/>
+                <TextBox Text="{Binding Entrada, Mode=TwoWay}" TextWrapping="Wrap" FontSize="18" Grid.Row="1" />
+            </Grid>
+
+            <StackPanel Grid.Row="1" Margin="0,10">
+                <TextBlock Text="Tempo"/>
+                <TextBox Text="{Binding Tempo, Mode=TwoWay}" FontSize="18" TextAlignment="Right"/>
+            </StackPanel>
+
+            <StackPanel Grid.Row="2" Margin="0,10">
+                <TextBlock Text="Potência"/>
+                <TextBox Text="{Binding Potencia, Mode=TwoWay}" FontSize="18" TextAlignment="Right"/>
+            </StackPanel>
+
+            <Grid Grid.Row="3">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Button Click="IniciarClick">Iniciar</Button>
+                <Button Grid.Column="1" Click="InicioRapidoClick">Início Rápido</Button>
+            </Grid>
+        </Grid>
+
+        <Grid Grid.Column="1" Margin="15,0,0,0">
+            <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
+                <RowDefinition Height="30"/>
             </Grid.RowDefinitions>
-            <TextBlock Text="Entrada"/>
-            <TextBox Text="{Binding Entrada, Mode=TwoWay}" TextWrapping="Wrap" FontSize="18" Grid.Row="1" />
+
+            <TextBox Text="{Binding FiltroFuncoes, UpdateSourceTrigger=PropertyChanged}" Height="20" />
+
+            <ListView Margin="0,10" Grid.Row="1" ItemsSource="{Binding CVFuncoes}">
+                <ListView.ItemContainerStyle>
+                    <Style TargetType="ListViewItem">
+                        <Setter Property="HorizontalAlignment" Value="Stretch" />
+                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                        <Setter Property="Background" Value="Transparent" />
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="{x:Type ListViewItem}">
+                                    <ContentPresenter />
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </ListView.ItemContainerStyle>
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <Button Content="{Binding Nome}" Height="20" Margin="0,0,0,1"/>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+
+            <Grid Grid.Row="2">
+                <Button Content="Consultar" Click="ConsultarClick"/>
+            </Grid>
         </Grid>
+        
 
-        <StackPanel Grid.Row="1" Margin="0,10">
-            <TextBlock Text="Tempo"/>
-            <TextBox Text="{Binding Tempo, Mode=TwoWay}" FontSize="18" TextAlignment="Right"/>
-        </StackPanel>
-
-        <StackPanel Grid.Row="2" Margin="0,10">
-            <TextBlock Text="Potência"/>
-            <TextBox Text="{Binding Potencia, Mode=TwoWay}" FontSize="18" TextAlignment="Right"/>
-        </StackPanel>
-
-        <Grid Grid.Row="3">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
-            </Grid.ColumnDefinitions>
-            <Button Click="IniciarClick">Iniciar</Button>
-            <Button Grid.Column="1" Click="InicioRapidoClick">Início Rápido</Button>
-        </Grid>
+        <Button Margin="0,-5,0,0" HorizontalAlignment="Right" VerticalAlignment="Top" Width="100" Height="20" Click="TesteClick" Content="Teste"/> 
     </Grid>
 </Window>

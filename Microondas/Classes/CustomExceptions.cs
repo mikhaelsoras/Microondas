@@ -10,6 +10,14 @@ namespace Classes.Microondas
             : base(message) { }
     }
 
+    public class AlimentoIncompativel : Exception
+    {
+        public AlimentoIncompativel() { }
+
+        public AlimentoIncompativel(string message)
+            : base(message) { }
+    }
+
     public class PotenciaForaDoLimite : Exception
     {
         public PotenciaForaDoLimite() { }

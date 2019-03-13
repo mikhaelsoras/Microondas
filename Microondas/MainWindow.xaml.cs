@@ -4,19 +4,16 @@ using Classes.Microondas;
 
 namespace MicroondasProject
 {
-
     public partial class MainWindow : Window
     {
-        private DadosFormPrincipal dados;
-        private Microondas microondas;
+        private MainWindowDados dados;
 
         public MainWindow()
         {
             InitializeComponent();
 
-            microondas = new Microondas();
-            microondas.TempoRestanteChanged += TempoRestanteChanged;
-            dados = new DadosFormPrincipal();
+            dados = new MainWindowDados();
+            dados.MicroondasAtual.TempoRestanteChanged += TempoRestanteChanged;
             DataContext = dados;
         }
 
@@ -35,7 +32,7 @@ namespace MicroondasProject
                 var entrada = dados.Entrada.Trim();
 
                 dados.InputEnabled = false;
-                await microondas.Iniciar(tempo, potencia, entrada);
+                await dados.MicroondasAtual.Iniciar(tempo, potencia, entrada);
                 dados.InputEnabled = true;
             }
             catch (Exception e)
@@ -56,6 +53,20 @@ namespace MicroondasProject
             dados.Tempo = "0:20";
 
             Iniciar();
+        }
+
+        private void TesteClick(object sender, RoutedEventArgs e)
+        {
+            //ServiceLocator.Get<ILocalDataService>().Salvar();
+            //var txt = ServiceLocator.Get<ILocalDataService>().Carregar();
+
+            dados.MicroondasAtual.Funcoes.Add(new FuncaoMicroondas(5, new TimeSpan(0, 0, 25), "Teste", "instrucao teste", '@', "frango"));
+        }
+
+        private void ConsultarClick(object sender, RoutedEventArgs e)
+        {
+            var window = new ConsultaWindow(dados.MicroondasAtual);
+            window.ShowDialog();
         }
     }
 }
