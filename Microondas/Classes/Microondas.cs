@@ -202,7 +202,7 @@ namespace Classes.Microondas
         {
             try
             {
-                var tempo = new TimeSpan(0, 0, 20);
+                var tempo = new TimeSpan(0, 0, 30);
                 await Iniciar(tempo, 8, entrada);
             }
             catch (Exception e)
