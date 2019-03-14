@@ -85,10 +85,17 @@ namespace MicroondasProject
 
         private void InicioRapidoClick(object sender, RoutedEventArgs e)
         {
-            dados.Potencia = "8";
-            dados.Tempo = "0:20";
+            try
+            {
+                var entrada = dados.Entrada.Trim();
 
-            Iniciar();
+                dados.IsLigado = true;
+                dados.MicroondasAtual.InicioRapido(entrada);
+            }
+            catch (Exception ex)
+            {
+                ExibirErro(ex.Message);
+            }
         }
 
         private void ConsultarClick(object sender, RoutedEventArgs e)

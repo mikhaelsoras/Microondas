@@ -28,12 +28,14 @@ namespace Classes.Microondas
         {
             Concluido?.Invoke(txt);
         }
+
         private void OnPauseChanged(bool isPaused)
         {
             IsPausado = isPaused;
             pedidoPausa = false;
             PausarChanged?.Invoke(IsPausado);
         }
+
         private void OnCancelado()
         {
             pedidoPausa = false;
@@ -44,6 +46,7 @@ namespace Classes.Microondas
 
             Cancelado?.Invoke();
         }
+
         //Retorna true caso o evento exista
         private bool OnErro(string msg)
         {  
@@ -52,32 +55,10 @@ namespace Classes.Microondas
         }
         #endregion
 
-        private bool pedidoPausa, pedidoCancelar;
-        // vai receber quanto tempo foi acumulado antes de aquecer a entrada
-        private TimeSpan contadorSegundos;
-
         #region Props
-
-        //verifica se deve pausar após cada segundo
-
         public bool IsPausado { get; private set; }
 
-        private ObservableCollection<FuncaoMicroondas> funcoes;
-
-        public ObservableCollection<FuncaoMicroondas> Funcoes
-        {
-            get
-            {
-                if (funcoes == null)
-                    funcoes = new ObservableCollection<FuncaoMicroondas>();
-                return funcoes;
-            }
-            set
-            {
-                funcoes = value;
-            }
-        }
-
+        public ObservableCollection<FuncaoMicroondas> Funcoes { get; set; }
         public FuncaoMicroondas FuncaoAtual;
 
         private TimeSpan tempoRestante;
@@ -97,19 +78,30 @@ namespace Classes.Microondas
         public string EntradaAquecida { get; private set; }
         #endregion
 
+        //verifica se deve pausar/cancelar após cada tick
+        private bool pedidoPausa, pedidoCancelar;
+        // vai receber quanto tempo foi acumulado antes de aquecer a entrada
+        private TimeSpan contadorSegundos;
+
         public Microondas()
         {
-            //Funções padrão
-            Funcoes.Add(new FuncaoMicroondas(2, new TimeSpan(0, 1, 0), "Descongelar", "Instrução para função descongelar.", '?', null, true));
-            Funcoes.Add(new FuncaoMicroondas(6, new TimeSpan(0, 2, 0), "Lasanha", "Instrução para função lasanha.", ';', "Lasanha", true));
-            Funcoes.Add(new FuncaoMicroondas(7, new TimeSpan(0, 0, 50), "Pipoca", "Instrução para função pipoca.", '=', "Pipoca", true));
-            Funcoes.Add(new FuncaoMicroondas(4, new TimeSpan(0, 2, 0), "Arroz", "Instrução para função arroz.", '-', "Arroz", true));
-            Funcoes.Add(new FuncaoMicroondas(3, new TimeSpan(0, 2, 0), "Sopa", "Instrução para função sopa.", '+', "Sopa", true));
-
+            Funcoes = new ObservableCollection<FuncaoMicroondas>();
             CarregarFuncoesCadastradas();
         }
 
-        public void CadastrarFuncao(int potencia, TimeSpan tempo, string nome, string instrucao, char caractere, string alimento)
+        private List<FuncaoMicroondas> FuncoesPredefinidas()
+        {
+            var list = new List<FuncaoMicroondas>();
+            list.Add(new FuncaoMicroondas(2, new TimeSpan(0, 1, 0), "Descongelar", "Instrução para função descongelar.", '?', null, true));
+            list.Add(new FuncaoMicroondas(6, new TimeSpan(0, 2, 0), "Lasanha", "Instrução para função lasanha.", ';', "Lasanha", true));
+            list.Add(new FuncaoMicroondas(7, new TimeSpan(0, 0, 50), "Pipoca", "Instrução para função pipoca.", '=', "Pipoca", true));
+            list.Add(new FuncaoMicroondas(4, new TimeSpan(0, 2, 0), "Arroz", "Instrução para função arroz.", '-', "Arroz", true));
+            list.Add(new FuncaoMicroondas(3, new TimeSpan(0, 2, 0), "Sopa", "Instrução para função sopa.", '+', "Sopa", true));
+
+            return list;
+        }
+
+        public void CadastrarFuncao(int potencia, TimeSpan tempo, string nome, string instrucao, char caractere, string alimento, bool SalvarAoInserir = true)
         {
             if (nome.Trim() == "")
             {
@@ -118,10 +110,11 @@ namespace Classes.Microondas
             }
 
             var funcao = new FuncaoMicroondas(potencia, tempo, nome, instrucao, caractere, alimento);
-            funcao.Validar(alimento); // garante que está dentro das restrições.
+            funcao.Validar(); // garante que está dentro das restrições.
             Funcoes.Add(funcao);
 
-            SalvarFuncoesCadastradas();
+            if (SalvarAoInserir)
+                SalvarFuncoesCadastradas();
         }
 
         public void CarregarFuncoesCadastradas()
@@ -129,15 +122,21 @@ namespace Classes.Microondas
             var FS = ServiceLocator.Get<IFileService>();
             try
             {
-                var json = FS.Carregar(FS.GetExePath("funcoes.json"));
-                var list = JsonConvert.DeserializeObject<List<FuncaoMicroondas>>(json);
+                Funcoes.Clear();
+                foreach (var item in FuncoesPredefinidas())
+                    Funcoes.Add(item);
 
-                foreach (var item in list)
-                    funcoes.Add(item);
+                if (FS != null)
+                {
+                    var json = FS.Carregar(FS.GetExePath("funcoes.json"));
+                    var list = JsonConvert.DeserializeObject<List<FuncaoMicroondas>>(json);
+                    foreach (var item in list)
+                        Funcoes.Add(item);
+                }
             }
             catch (FileNotFoundException)
             {
-                //Não fazer nada 
+                //Não fazer nada caso o Arquivo não exista
             }
             catch (Exception e)
             {
@@ -163,12 +162,12 @@ namespace Classes.Microondas
             }
         }
 
-        public void Iniciar(TimeSpan tempo, int potencia, string entrada)
+        public async Task Iniciar(TimeSpan tempo, int potencia, string entrada)
         {
             try
             {
                 var funcao = new FuncaoMicroondas(potencia, tempo);
-                Iniciar(funcao, entrada);
+                await Iniciar(funcao, entrada);
             }
             catch (Exception e)
             {
@@ -177,11 +176,12 @@ namespace Classes.Microondas
             }
         }
 
-        public void Iniciar(FuncaoMicroondas funcao, string entrada)
+        public async Task Iniciar(FuncaoMicroondas funcao, string entrada)
         {
             try
             {
-                funcao.Validar(entrada.Trim());
+                funcao.Validar();
+                funcao.ValidarEntrada(entrada.Trim());
 
                 FuncaoAtual = funcao;
 
@@ -189,7 +189,7 @@ namespace Classes.Microondas
                 TempoRestante = FuncaoAtual.Tempo;
                 contadorSegundos = TimeSpan.Zero;
 
-                Ligar(entrada);
+                await Ligar(entrada);
             }
             catch (Exception e)
             {
@@ -198,12 +198,12 @@ namespace Classes.Microondas
             }
         }
 
-        public void InicioRapido(string entrada)
+        public async Task InicioRapido(string entrada)
         {
             try
             {
-                var tempo = new TimeSpan(0, 0, 30);
-                Iniciar(tempo, 8, entrada);
+                var tempo = new TimeSpan(0, 0, 20);
+                await Iniciar(tempo, 8, entrada);
             }
             catch (Exception e)
             {
@@ -212,20 +212,19 @@ namespace Classes.Microondas
             }
         }
 
-        async void Ligar(string entrada)
+        private async Task Ligar(string entrada)
         {
             try
             {
                 var FS = ServiceLocator.Get<IFileService>();
-                var sec = new TimeSpan(0, 0, 1);
-                var tick = new TimeSpan(sec.Ticks / 10); //tempo de espera entre cada atualização
+                var tick = new TimeSpan(new TimeSpan(0, 0, 1).Ticks / 10); //tempo de espera entre cada atualização
 
                 OnPauseChanged(false);
 
-                if (FS.FileExists(entrada))
-                    await Aquecer(entrada, FS, sec, tick);
+                if (FS != null && FS.FileExists(entrada))
+                    await Aquecer(entrada, tick);
                 else
-                    await Aquecer(sec, tick);
+                    await Aquecer(tick);
 
                 if (!pedidoPausa && !pedidoCancelar)
                     OnConcluido(EntradaAquecida);
@@ -245,8 +244,9 @@ namespace Classes.Microondas
             }
         }
 
-        private async Task Aquecer(TimeSpan sec, TimeSpan tick)
+        private async Task Aquecer(TimeSpan tick)
         {
+            var sec = new TimeSpan(0, 0, 1);
             while (TempoRestante.TotalSeconds > 0 && !pedidoPausa && !pedidoCancelar)
             {
                 await Task.Delay(tick);
@@ -262,8 +262,10 @@ namespace Classes.Microondas
             }
         }
 
-        private async Task Aquecer(string caminho, IFileService FS, TimeSpan sec, TimeSpan tick)
+        private async Task Aquecer(string caminho, TimeSpan tick)
         {
+            var FS = ServiceLocator.Get<IFileService>();
+            var sec = new TimeSpan(0, 0, 1);
             using (StreamWriter sw = FS.GetStreamWriter(caminho, true))
             {
                 while (TempoRestante.TotalSeconds > 0 && !pedidoPausa && !pedidoCancelar)
@@ -283,26 +285,6 @@ namespace Classes.Microondas
             EntradaAquecida = FS.Carregar(caminho);
         }
 
-        public void Continuar()
-        {
-            if (IsPausado && tempoRestante.TotalSeconds > 0)
-                Ligar(EntradaAquecida);
-        }
-
-        public void Pausar()
-        {
-            if (!IsPausado && tempoRestante.TotalSeconds > 0)
-                pedidoPausa = true;
-        }
-
-        public void Cancelar()
-        {
-            if (tempoRestante.TotalSeconds > 0)
-            {
-                pedidoCancelar = true;
-            }
-        }
-
         private void Aquecer(StreamWriter sw = null)
         {
             var caracteres = "";
@@ -314,5 +296,40 @@ namespace Classes.Microondas
             else
                 sw.Write(caracteres);
         }
+
+        public async Task Continuar()
+        {
+            try
+            {
+                if (IsPausado && tempoRestante.TotalSeconds > 0)
+                    await Ligar(EntradaAquecida);
+            }
+            catch (Exception e)
+            {
+                if (!OnErro(e.Message))
+                    throw;
+            }
+        }
+
+        public void Pausar()
+        {
+            if (!IsPausado && tempoRestante.TotalSeconds > 0)
+                pedidoPausa = true;
+        }
+
+        public void Cancelar()
+        {
+            try
+            {
+                if (tempoRestante.TotalSeconds > 0)
+                    pedidoCancelar = true;
+            }
+            catch (Exception e)
+            {
+                if (!OnErro(e.Message))
+                    throw;
+            }
+        }
+
     }
 }

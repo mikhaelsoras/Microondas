@@ -45,5 +45,11 @@ namespace ServicesLocator.Services
         {
             return File.Exists(caminho);
         }
+
+        public void Deletar(string caminho)
+        {
+            if (FileExists(caminho))
+                File.Delete(caminho);
+        }
     }
 }

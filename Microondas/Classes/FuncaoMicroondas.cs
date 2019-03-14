@@ -45,14 +45,13 @@ namespace Classes.Microondas
             Predefinida = predefinida;
         }
 
-        public void Validar(string entrada)
+        public void Validar()
         {
             ValidarPotencia(Potencia);
             ValidarTempo(Tempo);
-            ValidarEntrada(entrada);
         }
 
-        void ValidarEntrada(string entrada)
+        public void ValidarEntrada(string entrada)
         {
             //se não possuir alimento definido ele considera que todos são permitidos.
             if (Alimento == null || Alimento == "")
