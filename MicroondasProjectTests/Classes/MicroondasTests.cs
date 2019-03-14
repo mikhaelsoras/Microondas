@@ -132,7 +132,6 @@ namespace Classes.Microondas.Tests
                 new FileService().RegisterService();
             }
             catch (ServicoJaRegistradoException) { }
-
             var FS = ServiceLocator.Get<IFileService>();
             FS.Deletar(FS.GetExePath("funcoes.json"));
 

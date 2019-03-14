@@ -51,7 +51,7 @@ namespace Classes.Microondas
             ValidarTempo(Tempo);
         }
 
-        public void ValidarEntrada(string entrada)
+        public void ValidarEntrada(string entrada, bool buscarArquivo = true)
         {
             //se não possuir alimento definido ele considera que todos são permitidos.
             if (Alimento == null || Alimento == "")
@@ -61,7 +61,7 @@ namespace Classes.Microondas
 
             string lcEntrada;
 
-            if (FS.FileExists(entrada))
+            if (buscarArquivo && FS.FileExists(entrada))
                 lcEntrada = FS.Carregar(entrada).ToLower().Trim();
             else
                 lcEntrada = entrada.ToLower().Trim();
