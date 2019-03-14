@@ -15,8 +15,8 @@ namespace MicroondasProject
         }
 
         #region Props
-
         public Microondas MicroondasAtual { get; private set; }
+        public ICollectionView CVFuncoes { get; private set; }
 
         private string filtroFuncoes;
         public string FiltroFuncoes
@@ -30,7 +30,6 @@ namespace MicroondasProject
             }
         }
 
-        public ICollectionView CVFuncoes { get; private set; }
 
         private string tempo;
         public string Tempo
@@ -98,17 +97,6 @@ namespace MicroondasProject
             }
         }
         #endregion
-        
-        private bool FiltrarFuncoes(object item)
-        {
-            var filtro = filtroFuncoes.Trim().ToLower();
-            if (filtro.Length == 0)
-                return true;
-
-            var funcao = item as FuncaoMicroondas;
-            var res = funcao.Nome.ToLower().Contains(filtro);
-            return res;
-        }
 
         public MainWindowDados()
         {
@@ -123,6 +111,17 @@ namespace MicroondasProject
 
             CVFuncoes = CollectionViewSource.GetDefaultView(MicroondasAtual.Funcoes);
             CVFuncoes.Filter = FiltrarFuncoes;
+        }
+
+        private bool FiltrarFuncoes(object item)
+        {
+            var filtro = filtroFuncoes.Trim().ToLower();
+            if (filtro.Length == 0)
+                return true;
+
+            var funcao = item as FuncaoMicroondas;
+            var res = funcao.Nome.ToLower().Contains(filtro);
+            return res;
         }
 
         private void PausarChanged(bool obj)

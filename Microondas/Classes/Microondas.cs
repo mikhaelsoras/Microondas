@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Classes.Microondas
 {
-    public class Microondas
+    public sealed class Microondas
     {
         #region Eventos
         public Action<Microondas> TempoRestanteChanged;
@@ -59,7 +59,7 @@ namespace Classes.Microondas
         public bool IsPausado { get; private set; }
 
         public ObservableCollection<FuncaoMicroondas> Funcoes { get; set; }
-        public FuncaoMicroondas FuncaoAtual;
+        public FuncaoMicroondas FuncaoAtual { get; private set; }
 
         private TimeSpan tempoRestante;
         public TimeSpan TempoRestante
@@ -184,9 +184,9 @@ namespace Classes.Microondas
                 funcao.ValidarEntrada(entrada.Trim());
 
                 FuncaoAtual = funcao;
-
                 EntradaAquecida = entrada;
                 TempoRestante = FuncaoAtual.Tempo;
+
                 contadorSegundos = TimeSpan.Zero;
 
                 await Ligar(entrada);

@@ -16,7 +16,7 @@ namespace Classes.Microondas
         public TimeSpan Tempo { get; set; }
 
         [JsonIgnore]
-        public bool Predefinida { get; private set; }
+        public bool Predefinida { get; protected set; }
 
         public FuncaoMicroondas()
         {
@@ -45,13 +45,13 @@ namespace Classes.Microondas
             Predefinida = predefinida;
         }
 
-        public void Validar()
+        public virtual void Validar()
         {
             ValidarPotencia(Potencia);
             ValidarTempo(Tempo);
         }
 
-        public void ValidarEntrada(string entrada, bool buscarArquivo = true)
+        public virtual void ValidarEntrada(string entrada, bool buscarArquivo = true)
         {
             //se não possuir alimento definido ele considera que todos são permitidos.
             if (Alimento == null || Alimento == "")
@@ -74,7 +74,7 @@ namespace Classes.Microondas
             throw new AlimentoIncompativelException("A função não é compativel com o alimento " + lcEntrada);
         }
 
-        void ValidarPotencia(int value)
+        protected virtual void ValidarPotencia(int value)
         {
             if (value > 10)
                 throw new PotenciaForaDoLimiteException("Potência com valor maior que o máximo permitido.");
@@ -82,7 +82,7 @@ namespace Classes.Microondas
                 throw new PotenciaForaDoLimiteException("Potência com valor menor que o minimo permitido.");
         }
 
-        void ValidarTempo(TimeSpan value)
+        protected virtual void ValidarTempo(TimeSpan value)
         {
             if (value.TotalSeconds > 120)
                 throw new TempoForaDoLimiteException("Tempo com valor maior que o máximo permitido.");

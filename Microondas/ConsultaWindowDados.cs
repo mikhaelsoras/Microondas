@@ -15,7 +15,6 @@ namespace MicroondasProject
 
         #region Props
         public Microondas MicroondasAtivo { get; private set; }
-
         public ICollectionView CVFuncoes { get; private set; }
 
         private string filtroAlimento;
