@@ -127,7 +127,11 @@ namespace Classes.Microondas.Tests
         [TestMethod()]
         public void SalvarCarregarFuncoesLocalmente_UmaFuncao_FuncaoCarregada()
         {
-            new FileService().RegisterService();
+            try
+            {
+                new FileService().RegisterService();
+            }
+            catch (ServicoJaRegistradoException) { }
 
             var FS = ServiceLocator.Get<IFileService>();
             FS.Deletar(FS.GetExePath("funcoes.json"));
@@ -158,7 +162,11 @@ namespace Classes.Microondas.Tests
         [TestMethod()]
         public async Task Iniciar_SemFuncaoPorArquivo_EntradaAquecida()
         {
-            new FileService().RegisterService();
+            try {
+                new FileService().RegisterService();
+            }
+            catch (ServicoJaRegistradoException) { }
+
             var FS = ServiceLocator.Get<IFileService>();
 
             var microondas = new Microondas();

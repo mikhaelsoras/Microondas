@@ -4,6 +4,12 @@ using ServicesLocator.Interfaces;
 
 namespace ServicesLocator.Locator
 {
+    public class ServicoJaRegistradoException : Exception
+    {
+        public ServicoJaRegistradoException(string message)
+            : base(message) { }
+    }
+
     public static class ServiceLocator
     {
         private static Dictionary<object, object> services = null;
@@ -28,7 +34,7 @@ namespace ServicesLocator.Locator
             if (Get<T>() == null)
                 services.Add(typeof(T), service);
             else
-                throw new Exception("Serviço já registrado.");
+                throw new ServicoJaRegistradoException("Serviço já registrado.");
         }
     }
 }
