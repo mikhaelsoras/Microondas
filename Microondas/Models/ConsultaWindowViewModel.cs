@@ -25,7 +25,7 @@ namespace MicroondasProject
             set
             {
                 filtroAlimento = value;
-                OnPropertyChanged("FiltroAlimento");
+                OnPropertyChanged();
                 CVFuncoes?.Refresh();
             }
         }

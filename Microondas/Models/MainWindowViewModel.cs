@@ -72,7 +72,7 @@ namespace MicroondasProject
             set
             {
                 isLigado = value;
-                OnPropertyChanged("IsLigado");
+                OnPropertyChanged();
                 OnPropertyChanged("IsDesligado");
             }
         }
