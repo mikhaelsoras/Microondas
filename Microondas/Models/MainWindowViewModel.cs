@@ -1,15 +1,16 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using System.Windows.Data;
 using Classes.Microondas;
 
 namespace MicroondasProject
 {
-    public class MainWindowDados : INotifyPropertyChanged
+    public class MainWindowViewModel : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
-        protected void OnPropertyChanged(string name)
+        protected void OnPropertyChanged([CallerMemberName] string name = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
@@ -25,7 +26,7 @@ namespace MicroondasProject
             set
             {
                 filtroFuncoes = value;
-                OnPropertyChanged("FiltroFuncoes");
+                OnPropertyChanged();
                 CVFuncoes?.Refresh();
             }
         }
@@ -38,7 +39,7 @@ namespace MicroondasProject
             set
             {
                 tempo = value;
-                OnPropertyChanged("Tempo");
+                OnPropertyChanged();
             }
         }
 
@@ -49,7 +50,7 @@ namespace MicroondasProject
             set
             {
                 entrada = value;
-                OnPropertyChanged("Entrada");
+                OnPropertyChanged();
             }
         }
 
@@ -60,7 +61,7 @@ namespace MicroondasProject
             set
             {
                 potencia = value;
-                OnPropertyChanged("Potencia");
+                OnPropertyChanged();
             }
         }
 
@@ -98,7 +99,7 @@ namespace MicroondasProject
         }
         #endregion
 
-        public MainWindowDados()
+        public MainWindowViewModel()
         {
             Entrada = "";
             Tempo = "0:00";

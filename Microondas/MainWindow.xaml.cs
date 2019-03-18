@@ -7,13 +7,13 @@ namespace MicroondasProject
 {
     public partial class MainWindow : Window
     {
-        private MainWindowDados dados;
+        private MainWindowViewModel dados;
 
         public MainWindow()
         {
             InitializeComponent();
 
-            dados = new MainWindowDados();
+            dados = new MainWindowViewModel();
             dados.MicroondasAtual.TempoRestanteChanged += TempoRestanteChanged;
             dados.MicroondasAtual.Concluido += ConcluidoAquecimento;
             dados.MicroondasAtual.Cancelado += CanceladoAquecimento;

@@ -1,14 +1,15 @@
 ﻿using Classes.Microondas;
 using System;
 using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using System.Windows.Data;
 
 namespace MicroondasProject
 {
-    public class ConsultaWindowDados : INotifyPropertyChanged
+    public class ConsultaWindowViewModel : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
-        protected void OnPropertyChanged(string name)
+        protected void OnPropertyChanged([CallerMemberName] string name = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
@@ -37,7 +38,7 @@ namespace MicroondasProject
             set
             {
                 nome = value;
-                OnPropertyChanged("Nome");
+                OnPropertyChanged();
             }
         }
 
@@ -48,7 +49,7 @@ namespace MicroondasProject
             set
             {
                 instrucao = value;
-                OnPropertyChanged("Instrucao");
+                OnPropertyChanged();
             }
         }
 
@@ -59,7 +60,7 @@ namespace MicroondasProject
             set
             {
                 alimento = value;
-                OnPropertyChanged("Alimento");
+                OnPropertyChanged();
             }
         }
 
@@ -70,7 +71,7 @@ namespace MicroondasProject
             set
             {
                 caractere = value;
-                OnPropertyChanged("Caractere");
+                OnPropertyChanged();
             }
         }
 
@@ -81,7 +82,7 @@ namespace MicroondasProject
             set
             {
                 potencia = value;
-                OnPropertyChanged("Potencia");
+                OnPropertyChanged();
             }
         }
 
@@ -92,14 +93,14 @@ namespace MicroondasProject
             set
             {
                 tempo = value;
-                OnPropertyChanged("Tempo");
+                OnPropertyChanged();
             }
         }
         #endregion
 
         #endregion
 
-        public ConsultaWindowDados(Microondas microondas)
+        public ConsultaWindowViewModel(Microondas microondas)
         {
             MicroondasAtivo = microondas;
             filtroAlimento = "";

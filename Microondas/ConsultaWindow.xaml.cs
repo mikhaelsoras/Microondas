@@ -6,12 +6,12 @@ namespace MicroondasProject
 {
     public partial class ConsultaWindow : Window
     {
-        ConsultaWindowDados dados;
+        ConsultaWindowViewModel dados;
 
         public ConsultaWindow(Microondas microondas)
         {
             InitializeComponent();
-            dados = new ConsultaWindowDados(microondas);
+            dados = new ConsultaWindowViewModel(microondas);
             DataContext = dados;
         }
 
