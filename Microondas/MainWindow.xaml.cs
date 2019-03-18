@@ -2,6 +2,7 @@
 using System.Windows;
 using System.Windows.Controls;
 using Classes.Microondas;
+using MicroondasProject.Models;
 
 namespace MicroondasProject
 {

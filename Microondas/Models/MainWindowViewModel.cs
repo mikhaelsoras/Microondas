@@ -5,7 +5,7 @@ using System.Runtime.CompilerServices;
 using System.Windows.Data;
 using Classes.Microondas;
 
-namespace MicroondasProject
+namespace MicroondasProject.Models
 {
     public class MainWindowViewModel : INotifyPropertyChanged
     {

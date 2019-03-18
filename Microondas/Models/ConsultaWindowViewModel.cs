@@ -4,7 +4,7 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Data;
 
-namespace MicroondasProject
+namespace MicroondasProject.Models
 {
     public class ConsultaWindowViewModel : INotifyPropertyChanged
     {
