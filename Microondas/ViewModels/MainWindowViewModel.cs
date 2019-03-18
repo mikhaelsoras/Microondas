@@ -1,11 +1,10 @@
 ﻿using System;
-using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Data;
-using Classes.Microondas;
+using MicroondasProject.Models;
 
-namespace MicroondasProject.Models
+namespace MicroondasProject.ViewModels
 {
     public class MainWindowViewModel : INotifyPropertyChanged
     {

@@ -1,10 +1,10 @@
-﻿using Classes.Microondas;
+﻿using MicroondasProject.Models;
 using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Data;
 
-namespace MicroondasProject.Models
+namespace MicroondasProject.ViewModels
 {
     public class ConsultaWindowViewModel : INotifyPropertyChanged
     {

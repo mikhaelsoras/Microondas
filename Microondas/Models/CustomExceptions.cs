@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Classes.Microondas
+namespace MicroondasProject.Models
 {
     public class TempoForaDoLimiteException : Exception
     {

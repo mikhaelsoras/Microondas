@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Windows;
 using System.Windows.Controls;
-using Classes.Microondas;
 using MicroondasProject.Models;
+using MicroondasProject.ViewModels;
 
 namespace MicroondasProject
 {

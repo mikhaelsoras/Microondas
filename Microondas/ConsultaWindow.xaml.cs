@@ -1,5 +1,5 @@
-﻿using Classes.Microondas;
-using MicroondasProject.Models;
+﻿using MicroondasProject.Models;
+using MicroondasProject.ViewModels;
 using System;
 using System.Windows;
 

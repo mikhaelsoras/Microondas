@@ -76,7 +76,7 @@
     <Compile Include="ConsultaWindow.xaml.cs">
       <DependentUpon>ConsultaWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Models\ConsultaWindowViewModel.cs" />
+    <Compile Include="ViewModels\ConsultaWindowViewModel.cs" />
     <Compile Include="ServiceLocator\Interfaces\IFileService.cs" />
     <Compile Include="ServiceLocator\Interfaces\IServiceLocatorService.cs" />
     <Compile Include="ServiceLocator\ServicesLocator.cs" />
@@ -93,10 +93,10 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Classes\Microondas.cs" />
-    <Compile Include="Classes\FuncaoMicroondas.cs" />
-    <Compile Include="Classes\CustomExceptions.cs" />
-    <Compile Include="Models\MainWindowViewModel.cs" />
+    <Compile Include="Models\Microondas.cs" />
+    <Compile Include="Models\FuncaoMicroondas.cs" />
+    <Compile Include="Models\CustomExceptions.cs" />
+    <Compile Include="ViewModels\MainWindowViewModel.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>

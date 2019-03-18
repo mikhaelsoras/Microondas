@@ -3,7 +3,7 @@ using ServicesLocator.Interfaces;
 using ServicesLocator.Locator;
 using System;
 
-namespace Classes.Microondas
+namespace MicroondasProject.Models
 {
     public class FuncaoMicroondas
     {

@@ -8,7 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Classes.Microondas
+namespace MicroondasProject.Models
 {
     public sealed class Microondas
     {
