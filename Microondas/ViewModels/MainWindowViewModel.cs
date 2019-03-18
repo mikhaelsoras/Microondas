@@ -1,8 +1,10 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using System.Windows;
 using System.Windows.Data;
 using MicroondasProject.Models;
+using MicroondasProject.ViewModels.Commands;
 
 namespace MicroondasProject.ViewModels
 {
@@ -14,8 +16,9 @@ namespace MicroondasProject.ViewModels
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
 
+        private Microondas microondas;
+
         #region Props
-        public Microondas MicroondasAtual { get; private set; }
         public ICollectionView CVFuncoes { get; private set; }
 
         private string filtroFuncoes;
@@ -72,30 +75,23 @@ namespace MicroondasProject.ViewModels
             {
                 isLigado = value;
                 OnPropertyChanged();
-                OnPropertyChanged("IsDesligado");
+                OnPropertyChanged(nameof(IsDesligado));
             }
         }
 
-        public bool IsDesligado
-        {
-            get { return !isLigado; }
-        }
-        
-        public bool IsPausado
-        {
-            get { return MicroondasAtual.IsPausado; }
-        }
+        public bool IsDesligado => !isLigado;
 
-        public string PausarText
-        {
-            get
-            {
-                if (IsPausado)
-                    return "Continuar";
-                else
-                    return "Pausar";
-            }
-        }
+        public bool IsPausado => microondas.IsPausado;
+        public bool IsNaoPausado => !IsPausado;
+        #endregion
+
+        #region Commands
+        public IniciarCommand IniciarCommand { get; set; }
+        public InicioRapidoCommand InicioRapidoCommand { get; set; }
+        public IniciarFuncaoCommand IniciarFuncaoCommand { get; set; }
+        public CancelarCommand CancelarCommand { get; set; }
+        public ContinuarCommand ContinuarCommand { get; set; }
+        public PausarCommand PausarCommand { get; set; }
         #endregion
 
         public MainWindowViewModel()
@@ -106,10 +102,21 @@ namespace MicroondasProject.ViewModels
             isLigado = false;
             filtroFuncoes = "";
 
-            MicroondasAtual = new Microondas();
-            MicroondasAtual.PausarChanged += PausarChanged;
+            this.IniciarCommand = new IniciarCommand(this);
+            this.IniciarFuncaoCommand = new IniciarFuncaoCommand(this);
+            this.InicioRapidoCommand = new InicioRapidoCommand(this);
+            this.CancelarCommand = new CancelarCommand(this);
+            this.ContinuarCommand = new ContinuarCommand(this);
+            this.PausarCommand = new PausarCommand(this);
 
-            CVFuncoes = CollectionViewSource.GetDefaultView(MicroondasAtual.Funcoes);
+            microondas = new Microondas();
+            microondas.PausarChanged += PausarChanged;
+            microondas.TempoRestanteChanged += TempoRestanteChanged;
+            microondas.Concluido += ConcluidoAquecimento;
+            microondas.Cancelado += CanceladoAquecimento;
+            microondas.Erro += ExibirErro;
+
+            CVFuncoes = CollectionViewSource.GetDefaultView(microondas.Funcoes);
             CVFuncoes.Filter = FiltrarFuncoes;
         }
 
@@ -124,10 +131,30 @@ namespace MicroondasProject.ViewModels
             return res;
         }
 
+        private void TempoRestanteChanged(Microondas obj)
+        {
+            Entrada = obj.EntradaAquecida;
+            Tempo = obj.TempoRestante.ToString(@"mm\:ss");
+            Potencia = obj.FuncaoAtual.Potencia.ToString();
+        }
+
         private void PausarChanged(bool obj)
         {
-            OnPropertyChanged("IsPausado");
-            OnPropertyChanged("PausarText");
+            OnPropertyChanged(nameof(IsPausado));
+            OnPropertyChanged(nameof(IsNaoPausado));
+        }
+
+        private void ConcluidoAquecimento(string obj)
+        {
+            MessageBox.Show("Concluido: " + obj);
+            IsLigado = false;
+        }
+
+        private void ExibirErro(string obj)
+        {
+            if (IsLigado)
+                IsLigado = false;
+            MessageBox.Show(obj, "Erro", MessageBoxButton.OK, MessageBoxImage.Error);
         }
 
         public TimeSpan GetTempo()
@@ -152,5 +179,56 @@ namespace MicroondasProject.ViewModels
             else
                 throw new Exception("A potência informada é inválida.");
         }
+
+        public void CanceladoAquecimento()
+        {
+            MessageBox.Show("Cancelado");
+            IsLigado = false;
+        }
+
+        public void Iniciar()
+        {
+            try
+            {
+                var tempo = GetTempo();
+                var potencia = GetPotencia();
+                var funcao = new FuncaoMicroondas(potencia, tempo);
+
+                Iniciar(funcao);
+            }
+            catch (Exception e)
+            {
+                ExibirErro(e.Message);
+            }
+        }
+
+        public void Iniciar(FuncaoMicroondas funcaoMicroondas)
+        {
+            try
+            {
+                var entrada = Entrada.Trim();
+                IsLigado = true;
+                microondas.Iniciar(funcaoMicroondas, entrada);
+            }
+            catch (Exception e)
+            {
+                ExibirErro(e.Message);
+            }
+        }
+
+        public void InicioRapido()
+        {
+            try
+            {
+                var entrada = Entrada.Trim();
+                IsLigado = true;
+                microondas.InicioRapido(entrada);
+            }
+            catch (Exception ex)
+            {
+                ExibirErro(ex.Message);
+            }
+        }
+
     }
 }

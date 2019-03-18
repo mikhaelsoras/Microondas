@@ -1,10 +1,20 @@
-﻿<Window x:Class="MicroondasProject.MainWindow"
+﻿<Window
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="clr-namespace:MicroondasProject.ViewModels"
+        xmlns:local="clr-namespace:MicroondasProject" x:Class="MicroondasProject.MainWindow"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800" WindowStartupLocation="CenterScreen">
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVis" />
+        <vm:MainWindowViewModel x:Key="dcMainWindow"/>
+    </Window.Resources>
+    <Window.DataContext>
+        <Binding Source="{StaticResource dcMainWindow}"/>
+    </Window.DataContext>
+
     <Grid Margin="15,10,15,15">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
@@ -47,23 +57,24 @@
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
-                    <Button Click="IniciarClick">Iniciar</Button>
-                    <Button Grid.Column="1" Click="InicioRapidoClick">Início Rápido</Button>
+                    <Button Command="{Binding IniciarCommand}" Content="Iniciar" />
+                    <Button Grid.Column="1" Command="{Binding InicioRapidoCommand}" Content="Início Rápido" />
                 </Grid>
             </Grid>
-            
+
             <Grid Grid.Row="1" IsEnabled="{Binding IsLigado}">
                 <Grid Grid.Row="3">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
-                    <Button Click="PausarClick" Content="{Binding PausarText, FallbackValue='Pausar'}"/>
-                    <Button Grid.Column="1" Click="CancelarClick">Cancelar</Button>
+                    <Button Content="Pausar" Visibility="{Binding Path=IsPausado, Converter={StaticResource BoolToVis}}"/>
+                    <Button Content="Continuar" Visibility="{Binding Path=IsNaoPausado, Converter={StaticResource BoolToVis}}"/>
+                    <Button Grid.Column="1" Content="Cancelar"/>
                 </Grid>
             </Grid>
         </Grid>
-        
+
         <Grid Grid.Column="1" Margin="15,0,0,0" IsEnabled="{Binding IsDesligado}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
@@ -75,7 +86,7 @@
 
             <ListView Margin="0,10" Grid.Row="1" ItemsSource="{Binding CVFuncoes}">
                 <ListView.ItemContainerStyle>
-                    <Style TargetType="ListViewItem">
+                    <Style TargetType="{x:Type ListViewItem}">
                         <Setter Property="HorizontalAlignment" Value="Stretch" />
                         <Setter Property="HorizontalContentAlignment" Value="Stretch" />
                         <Setter Property="Background" Value="Transparent" />
@@ -90,13 +101,15 @@
                 </ListView.ItemContainerStyle>
                 <ListView.ItemTemplate>
                     <DataTemplate>
-                        <Button Content="{Binding Nome}" Click="FuncaoClick" Height="20" Margin="0,0,0,1"/>
+                        <Button Content="{Binding Nome}" Height="20" Margin="0,0,0,1" 
+                                Command="{Binding DataContext.IniciarFuncaoCommand, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:MainWindow}}}" 
+                                CommandParameter="{Binding Mode=OneWay}"/>
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>
 
             <Grid Grid.Row="2">
-                <Button Content="Consultar" Click="ConsultarClick"/>
+                <Button Content="Consultar"/>
             </Grid>
         </Grid>
     </Grid>

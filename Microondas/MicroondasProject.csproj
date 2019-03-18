@@ -76,6 +76,12 @@
     <Compile Include="ConsultaWindow.xaml.cs">
       <DependentUpon>ConsultaWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ViewModels\Commands\CancelarCommand.cs" />
+    <Compile Include="ViewModels\Commands\ContinuarCommand.cs" />
+    <Compile Include="ViewModels\Commands\IniciarCommand.cs" />
+    <Compile Include="ViewModels\Commands\IniciarFuncaoCommand.cs" />
+    <Compile Include="ViewModels\Commands\InicioRapidoCommand.cs" />
+    <Compile Include="ViewModels\Commands\PausarCommand.cs" />
     <Compile Include="ViewModels\ConsultaWindowViewModel.cs" />
     <Compile Include="ServiceLocator\Interfaces\IFileService.cs" />
     <Compile Include="ServiceLocator\Interfaces\IServiceLocatorService.cs" />
@@ -141,5 +147,6 @@
       <Install>false</Install>
     </BootstrapperPackage>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
