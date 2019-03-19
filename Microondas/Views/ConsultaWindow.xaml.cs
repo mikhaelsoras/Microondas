@@ -3,7 +3,7 @@ using MicroondasProject.ViewModels;
 using System;
 using System.Windows;
 
-namespace MicroondasProject
+namespace MicroondasProject.Views
 {
     public partial class ConsultaWindow : Window
     {

@@ -5,6 +5,7 @@ using System.Windows;
 using System.Windows.Data;
 using MicroondasProject.Models;
 using MicroondasProject.ViewModels.Commands;
+using MicroondasProject.Views;
 
 namespace MicroondasProject.ViewModels
 {
