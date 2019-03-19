@@ -25,5 +25,10 @@ namespace MicroondasProject.ViewModels.Commands
         {
             mainWindowViewModel.Iniciar();
         }
+
+        public void OnCanExecuteChanged()
+        {
+            CanExecuteChanged?.Invoke(this, new EventArgs());
+        }
     }
 }

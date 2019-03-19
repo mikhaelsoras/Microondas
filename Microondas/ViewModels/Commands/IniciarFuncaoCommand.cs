@@ -30,5 +30,10 @@ namespace MicroondasProject.ViewModels.Commands
         {
             mainWindowViewModel.Iniciar(parameter as FuncaoMicroondas);
         }
+
+        public void OnCanExecuteChanged()
+        {
+            CanExecuteChanged?.Invoke(this, new EventArgs());
+        }
     }
 }

@@ -7,16 +7,16 @@ using System.Windows.Input;
 
 namespace MicroondasProject.ViewModels.Commands
 {
-    public class InicioRapidoCommand : ICommand
+    public class ConsultarCommand : ICommand
     {
         private MainWindowViewModel mainWindowViewModel;
 
-        public event EventHandler CanExecuteChanged;
-
-        public InicioRapidoCommand(MainWindowViewModel mainWindowViewModel)
+        public ConsultarCommand(MainWindowViewModel mainWindowViewModel)
         {
             this.mainWindowViewModel = mainWindowViewModel;
         }
+
+        public event EventHandler CanExecuteChanged;
 
         public bool CanExecute(object parameter)
         {
@@ -27,7 +27,7 @@ namespace MicroondasProject.ViewModels.Commands
 
         public void Execute(object parameter)
         {
-            mainWindowViewModel.InicioRapido();
+            mainWindowViewModel.Consultar();
         }
 
         public void OnCanExecuteChanged()

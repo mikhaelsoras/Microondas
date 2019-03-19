@@ -16,8 +16,6 @@ namespace MicroondasProject.ViewModels
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
 
-        private Microondas microondas;
-
         #region Props
         public ICollectionView CVFuncoes { get; private set; }
 
@@ -76,9 +74,15 @@ namespace MicroondasProject.ViewModels
                 isLigado = value;
                 OnPropertyChanged();
                 OnPropertyChanged(nameof(IsDesligado));
+
                 CancelarCommand.OnCanExecuteChanged();
                 ContinuarCommand.OnCanExecuteChanged();
                 PausarCommand.OnCanExecuteChanged();
+                ConsultarCommand.OnCanExecuteChanged();
+
+                IniciarFuncaoCommand.OnCanExecuteChanged();
+                IniciarCommand.OnCanExecuteChanged();
+                InicioRapidoCommand.OnCanExecuteChanged();
             }
         }
 
@@ -95,7 +99,10 @@ namespace MicroondasProject.ViewModels
         public CancelarCommand CancelarCommand { get; set; }
         public ContinuarCommand ContinuarCommand { get; set; }
         public PausarCommand PausarCommand { get; set; }
+        public ConsultarCommand ConsultarCommand { get; set; }
         #endregion
+
+        private Microondas microondas;
 
         public MainWindowViewModel()
         {
@@ -111,6 +118,7 @@ namespace MicroondasProject.ViewModels
             this.CancelarCommand = new CancelarCommand(this);
             this.ContinuarCommand = new ContinuarCommand(this);
             this.PausarCommand = new PausarCommand(this);
+            this.ConsultarCommand = new ConsultarCommand(this);
 
             microondas = new Microondas();
             microondas.PausarChanged += PausarChanged;
@@ -249,6 +257,12 @@ namespace MicroondasProject.ViewModels
         public void Cancelar()
         {
             microondas.Cancelar();
+        }
+
+        public void Consultar()
+        {
+            var window = new ConsultaWindow(microondas);
+            window.ShowDialog();
         }
     }
 }

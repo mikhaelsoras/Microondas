@@ -110,7 +110,7 @@
             </ListView>
 
             <Grid Grid.Row="2">
-                <Button Content="Consultar"/>
+                <Button Content="Consultar" Command="{Binding ConsultarCommand}" />
             </Grid>
         </Grid>
     </Grid>
