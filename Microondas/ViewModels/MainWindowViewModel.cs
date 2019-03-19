@@ -32,7 +32,6 @@ namespace MicroondasProject.ViewModels
             }
         }
 
-
         private string tempo;
         public string Tempo
         {

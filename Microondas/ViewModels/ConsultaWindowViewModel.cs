@@ -17,7 +17,16 @@ namespace MicroondasProject.ViewModels
         }
 
         #region Props
-        public ICollectionView CVFuncoes { get; private set; }
+        private ICollectionView cvFuncoes;
+        public ICollectionView CVFuncoes
+        {
+            get { return cvFuncoes; }
+            set
+            {
+                cvFuncoes = value;
+                OnPropertyChanged();
+            }
+        }
 
         private string filtroAlimento;
         public string FiltroAlimento
@@ -105,14 +114,18 @@ namespace MicroondasProject.ViewModels
 
         private Microondas microondas;
 
-        public ConsultaWindowViewModel(Microondas microondas)
+        public ConsultaWindowViewModel()
+        {
+            FiltroAlimento = "";
+            AdicionarFuncaoCommand = new AdicionarFuncaoCommand(this);
+        }
+
+        public void SetMicroondas(Microondas microondas)
         {
             this.microondas = microondas;
-            filtroAlimento = "";
+            FiltroAlimento = "";
             CVFuncoes = CollectionViewSource.GetDefaultView(this.microondas.Funcoes);
             CVFuncoes.Filter = FiltrarFuncoes;
-
-            AdicionarFuncaoCommand = new AdicionarFuncaoCommand(this);
         }
 
         private bool FiltrarFuncoes(object item)

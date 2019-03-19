@@ -10,7 +10,7 @@ namespace MicroondasProject.Views
         public ConsultaWindow(Microondas microondas)
         {
             InitializeComponent();
-            DataContext = new ConsultaWindowViewModel(microondas);
+            (DataContext as ConsultaWindowViewModel).SetMicroondas(microondas);
         }
     }
 }

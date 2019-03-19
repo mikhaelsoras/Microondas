@@ -3,8 +3,15 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="clr-namespace:MicroondasProject.ViewModels"
         mc:Ignorable="d"
         Title="ConsultaWindow" Height="450" Width="800" WindowStartupLocation="CenterScreen">
+    <Window.Resources>
+        <vm:ConsultaWindowViewModel x:Key="dcConsultaWindow"/>
+    </Window.Resources>
+    <Window.DataContext>
+        <Binding Source="{StaticResource dcConsultaWindow}"/>
+    </Window.DataContext>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
