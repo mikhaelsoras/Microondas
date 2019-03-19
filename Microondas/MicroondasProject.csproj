@@ -76,6 +76,7 @@
     <Compile Include="ConsultaWindow.xaml.cs">
       <DependentUpon>ConsultaWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ViewModels\Commands\AdicionarFuncaoCommand.cs" />
     <Compile Include="ViewModels\Commands\CancelarCommand.cs" />
     <Compile Include="ViewModels\Commands\ConsultarCommand.cs" />
     <Compile Include="ViewModels\Commands\ContinuarCommand.cs" />

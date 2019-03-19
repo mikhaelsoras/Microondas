@@ -1,7 +1,9 @@
 ﻿using MicroondasProject.Models;
+using MicroondasProject.ViewModels.Commands;
 using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using System.Windows;
 using System.Windows.Data;
 
 namespace MicroondasProject.ViewModels
@@ -15,7 +17,6 @@ namespace MicroondasProject.ViewModels
         }
 
         #region Props
-        public Microondas MicroondasAtivo { get; private set; }
         public ICollectionView CVFuncoes { get; private set; }
 
         private string filtroAlimento;
@@ -100,12 +101,18 @@ namespace MicroondasProject.ViewModels
 
         #endregion
 
+        public AdicionarFuncaoCommand AdicionarFuncaoCommand { get; set; }
+
+        private Microondas microondas;
+
         public ConsultaWindowViewModel(Microondas microondas)
         {
-            MicroondasAtivo = microondas;
+            this.microondas = microondas;
             filtroAlimento = "";
-            CVFuncoes = CollectionViewSource.GetDefaultView(MicroondasAtivo.Funcoes);
+            CVFuncoes = CollectionViewSource.GetDefaultView(this.microondas.Funcoes);
             CVFuncoes.Filter = FiltrarFuncoes;
+
+            AdicionarFuncaoCommand = new AdicionarFuncaoCommand(this);
         }
 
         private bool FiltrarFuncoes(object item)
@@ -154,6 +161,39 @@ namespace MicroondasProject.ViewModels
                 return valor;
             else
                 throw new Exception("A potência informada é inválida.");
+        }
+
+        public void Adicionar()
+        {
+            var potencia = GetPotencia();
+            var tempo = GetTempo();
+            var caractere = GetCaractere();
+            var nome = Nome.Trim();
+            var instrucao = Instrucao.Trim();
+
+            string alimento = "";
+            if (Alimento != null)
+                alimento = Alimento.Trim();
+
+            try
+            {
+                microondas.CadastrarFuncao(potencia, tempo, nome, instrucao, caractere, alimento);
+                Potencia = "";
+                Tempo = "";
+                Caractere = "";
+                Nome = "";
+                Instrucao = "";
+                Alimento = "";
+            }
+            catch (Exception ex)
+            {
+                ExibirErro(ex.Message);
+            }
+        }
+
+        private void ExibirErro(string obj)
+        {
+            MessageBox.Show(obj, "Erro", MessageBoxButton.OK, MessageBoxImage.Error);
         }
     }
 }

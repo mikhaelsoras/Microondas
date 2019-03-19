@@ -91,7 +91,7 @@
                         <TextBox Text="{Binding Caractere, Mode=TwoWay}" Grid.Column="7"/>
                     </Grid>
                 </Grid>
-                <Button Grid.Column="1" Content="Adicionar" Width="80" Margin="5,0,0,0" Click="AdicionarClick"/>
+                <Button Grid.Column="1" Content="Adicionar" Width="80" Margin="5,0,0,0" Command="{Binding AdicionarFuncaoCommand}"/>
             </Grid>
         </GroupBox>
     </Grid>
