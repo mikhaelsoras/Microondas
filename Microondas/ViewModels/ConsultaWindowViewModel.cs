@@ -1,21 +1,32 @@
-﻿using Classes.Microondas;
+﻿using MicroondasProject.Models;
+using MicroondasProject.ViewModels.Commands;
 using System;
 using System.ComponentModel;
+using System.Runtime.CompilerServices;
+using System.Windows;
 using System.Windows.Data;
 
-namespace MicroondasProject
+namespace MicroondasProject.ViewModels
 {
-    public class ConsultaWindowDados : INotifyPropertyChanged
+    public class ConsultaWindowViewModel : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
-        protected void OnPropertyChanged(string name)
+        protected void OnPropertyChanged([CallerMemberName] string name = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
 
         #region Props
-        public Microondas MicroondasAtivo { get; private set; }
-        public ICollectionView CVFuncoes { get; private set; }
+        private ICollectionView cvFuncoes;
+        public ICollectionView CVFuncoes
+        {
+            get { return cvFuncoes; }
+            set
+            {
+                cvFuncoes = value;
+                OnPropertyChanged();
+            }
+        }
 
         private string filtroAlimento;
         public string FiltroAlimento
@@ -24,7 +35,7 @@ namespace MicroondasProject
             set
             {
                 filtroAlimento = value;
-                OnPropertyChanged("FiltroAlimento");
+                OnPropertyChanged();
                 CVFuncoes?.Refresh();
             }
         }
@@ -37,7 +48,7 @@ namespace MicroondasProject
             set
             {
                 nome = value;
-                OnPropertyChanged("Nome");
+                OnPropertyChanged();
             }
         }
 
@@ -48,7 +59,7 @@ namespace MicroondasProject
             set
             {
                 instrucao = value;
-                OnPropertyChanged("Instrucao");
+                OnPropertyChanged();
             }
         }
 
@@ -59,7 +70,7 @@ namespace MicroondasProject
             set
             {
                 alimento = value;
-                OnPropertyChanged("Alimento");
+                OnPropertyChanged();
             }
         }
 
@@ -70,7 +81,7 @@ namespace MicroondasProject
             set
             {
                 caractere = value;
-                OnPropertyChanged("Caractere");
+                OnPropertyChanged();
             }
         }
 
@@ -81,7 +92,7 @@ namespace MicroondasProject
             set
             {
                 potencia = value;
-                OnPropertyChanged("Potencia");
+                OnPropertyChanged();
             }
         }
 
@@ -92,18 +103,28 @@ namespace MicroondasProject
             set
             {
                 tempo = value;
-                OnPropertyChanged("Tempo");
+                OnPropertyChanged();
             }
         }
         #endregion
 
         #endregion
 
-        public ConsultaWindowDados(Microondas microondas)
+        public AdicionarFuncaoCommand AdicionarFuncaoCommand { get; set; }
+
+        private Microondas microondas;
+
+        public ConsultaWindowViewModel()
         {
-            MicroondasAtivo = microondas;
-            filtroAlimento = "";
-            CVFuncoes = CollectionViewSource.GetDefaultView(MicroondasAtivo.Funcoes);
+            FiltroAlimento = "";
+            AdicionarFuncaoCommand = new AdicionarFuncaoCommand(this);
+        }
+
+        public void SetMicroondas(Microondas microondas)
+        {
+            this.microondas = microondas;
+            FiltroAlimento = "";
+            CVFuncoes = CollectionViewSource.GetDefaultView(this.microondas.Funcoes);
             CVFuncoes.Filter = FiltrarFuncoes;
         }
 
@@ -153,6 +174,39 @@ namespace MicroondasProject
                 return valor;
             else
                 throw new Exception("A potência informada é inválida.");
+        }
+
+        public void Adicionar()
+        {
+            var potencia = GetPotencia();
+            var tempo = GetTempo();
+            var caractere = GetCaractere();
+            var nome = Nome.Trim();
+            var instrucao = Instrucao.Trim();
+
+            string alimento = "";
+            if (Alimento != null)
+                alimento = Alimento.Trim();
+
+            try
+            {
+                microondas.CadastrarFuncao(potencia, tempo, nome, instrucao, caractere, alimento);
+                Potencia = "";
+                Tempo = "";
+                Caractere = "";
+                Nome = "";
+                Instrucao = "";
+                Alimento = "";
+            }
+            catch (Exception ex)
+            {
+                ExibirErro(ex.Message);
+            }
+        }
+
+        private void ExibirErro(string obj)
+        {
+            MessageBox.Show(obj, "Erro", MessageBoxButton.OK, MessageBoxImage.Error);
         }
     }
 }

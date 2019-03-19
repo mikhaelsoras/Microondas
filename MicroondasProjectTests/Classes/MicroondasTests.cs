@@ -1,15 +1,12 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Classes.Microondas;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using ServicesLocator.Services;
 using ServicesLocator.Locator;
 using ServicesLocator.Interfaces;
 
-namespace Classes.Microondas.Tests
+namespace MicroondasProject.Models.Tests
 {
     // Metodo Cenario Comportamento experado
     [TestClass()]
@@ -46,7 +43,9 @@ namespace Classes.Microondas.Tests
             var potencia = 2;
             var entrada = "teste";
 
-            await microondas.Iniciar(tempo, potencia, entrada);
+            var funcao = new FuncaoMicroondas(potencia, tempo);
+
+            await microondas.Iniciar(funcao, entrada);
 
             Assert.AreEqual(microondas.EntradaAquecida, entrada + "....");
         }
@@ -178,7 +177,9 @@ namespace Classes.Microondas.Tests
 
             FS.Salvar(FS.GetExePath("arquivo.txt"), entrada);
 
-            await microondas.Iniciar(tempo, potencia, FS.GetExePath("arquivo.txt"));
+            var funcao = new FuncaoMicroondas(potencia, tempo);
+
+            await microondas.Iniciar(funcao, FS.GetExePath("arquivo.txt"));
 
             var arqValor = FS.Carregar(FS.GetExePath("arquivo.txt"));
 

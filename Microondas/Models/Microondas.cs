@@ -8,16 +8,16 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Classes.Microondas
+namespace MicroondasProject.Models
 {
     public sealed class Microondas
     {
         #region Eventos
-        public Action<Microondas> TempoRestanteChanged;
-        public Action<string> Concluido;
-        public Action Cancelado;
-        public Action<string> Erro;
-        public Action<bool> PausarChanged;
+        public event Action<Microondas> TempoRestanteChanged;
+        public event Action<string> Concluido;
+        public event Action<string> Erro;
+        public event Action<bool> PausarChanged;
+        public event Action Cancelado;
 
         private void OnTempoRestanteChanged()
         {
@@ -162,20 +162,6 @@ namespace Classes.Microondas
             }
         }
 
-        public async Task Iniciar(TimeSpan tempo, int potencia, string entrada)
-        {
-            try
-            {
-                var funcao = new FuncaoMicroondas(potencia, tempo);
-                await Iniciar(funcao, entrada);
-            }
-            catch (Exception e)
-            {
-                if (!OnErro(e.Message))
-                    throw;
-            }
-        }
-
         public async Task Iniciar(FuncaoMicroondas funcao, string entrada)
         {
             try
@@ -203,7 +189,8 @@ namespace Classes.Microondas
             try
             {
                 var tempo = new TimeSpan(0, 0, 30);
-                await Iniciar(tempo, 8, entrada);
+                var funcao = new FuncaoMicroondas(8, tempo);
+                await Iniciar(funcao, entrada);
             }
             catch (Exception e)
             {

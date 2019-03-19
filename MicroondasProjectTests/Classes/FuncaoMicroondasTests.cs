@@ -1,15 +1,10 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Classes.Microondas;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using ServicesLocator.Services;
 using ServicesLocator.Locator;
 using ServicesLocator.Interfaces;
 
-namespace Classes.Microondas.Tests
+namespace MicroondasProject.Models.Tests
 {
     [TestClass()]
     public class FuncaoMicroondasTests
