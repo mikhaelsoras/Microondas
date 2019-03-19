@@ -62,15 +62,16 @@
                 </Grid>
             </Grid>
 
-            <Grid Grid.Row="1" IsEnabled="{Binding IsLigado}">
+            <Grid Grid.Row="1">
                 <Grid Grid.Row="3">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
-                    <Button Content="Pausar" Visibility="{Binding Path=IsPausado, Converter={StaticResource BoolToVis}}"/>
-                    <Button Content="Continuar" Visibility="{Binding Path=IsNaoPausado, Converter={StaticResource BoolToVis}}"/>
-                    <Button Grid.Column="1" Content="Cancelar"/>
+
+                    <Button Command="{Binding ContinuarCommand}" Content="Continuar" Visibility="{Binding Path=IsPausado, Converter={StaticResource BoolToVis}}"/>
+                    <Button Command="{Binding PausarCommand}" Grid.Column="0" Content="Pausar" Visibility="{Binding Path=IsNaoPausado, Converter={StaticResource BoolToVis}}"/>
+                    <Button Command="{Binding CancelarCommand}" Grid.Column="1" Content="Cancelar"/>
                 </Grid>
             </Grid>
         </Grid>

@@ -20,12 +20,19 @@ namespace MicroondasProject.ViewModels.Commands
 
         public bool CanExecute(object parameter)
         {
-            throw new NotImplementedException();
+            if (mainWindowViewModel != null && mainWindowViewModel.IsLigado && mainWindowViewModel.IsNaoPausado)
+                return true;
+            return false;
         }
 
         public void Execute(object parameter)
         {
-            throw new NotImplementedException();
+            mainWindowViewModel.Pausar();
+        }
+
+        public void OnCanExecuteChanged()
+        {
+            CanExecuteChanged?.Invoke(this, new EventArgs());
         }
     }
 }

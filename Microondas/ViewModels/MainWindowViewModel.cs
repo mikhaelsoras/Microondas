@@ -76,6 +76,9 @@ namespace MicroondasProject.ViewModels
                 isLigado = value;
                 OnPropertyChanged();
                 OnPropertyChanged(nameof(IsDesligado));
+                CancelarCommand.OnCanExecuteChanged();
+                ContinuarCommand.OnCanExecuteChanged();
+                PausarCommand.OnCanExecuteChanged();
             }
         }
 
@@ -142,6 +145,9 @@ namespace MicroondasProject.ViewModels
         {
             OnPropertyChanged(nameof(IsPausado));
             OnPropertyChanged(nameof(IsNaoPausado));
+
+            ContinuarCommand.OnCanExecuteChanged();
+            PausarCommand.OnCanExecuteChanged();
         }
 
         private void ConcluidoAquecimento(string obj)
@@ -230,5 +236,19 @@ namespace MicroondasProject.ViewModels
             }
         }
 
+        public void Pausar()
+        {
+            microondas.Pausar();
+        }
+
+        public void Continuar()
+        {
+            microondas.Continuar();
+        }
+
+        public void Cancelar()
+        {
+            microondas.Cancelar();
+        }
     }
 }
